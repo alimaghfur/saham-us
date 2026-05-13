@@ -24,11 +24,11 @@ import { formatLargeNumber, formatPrice, formatPercent } from "@/lib/format";
 import type { ScreenerFilter } from "@/lib/types";
 
 const PRESETS = [
-  { name: "value", label: "Value Stocks", description: "Low PE, high ROE" },
-  { name: "growth", label: "Growth Stars", description: "High revenue growth" },
-  { name: "dividend", label: "Dividend Kings", description: "High yield, stable" },
-  { name: "momentum", label: "Momentum", description: "Strong uptrend" },
-  { name: "undervalued", label: "Undervalued", description: "Below book value" },
+  { name: "value", label: "Value Stocks", description: "Low PE < 15, P/B < 2" },
+  { name: "growth", label: "Growth Stars", description: "Revenue growth > 15%" },
+  { name: "dividend", label: "Dividend Kings", description: "Yield > 3%, stable" },
+  { name: "quality", label: "Quality", description: "ROE > 15%, large cap" },
+  { name: "large_cap", label: "Large Cap", description: "Market cap > $100B" },
 ];
 
 const SECTORS = [
@@ -49,14 +49,15 @@ export default function ScreenerPage() {
   const [activePreset, setActivePreset] = useState<string | null>(null);
   const [showFilters, setShowFilters] = useState(false);
   const [filters, setFilters] = useState<ScreenerFilter>({});
+  const [runCount, setRunCount] = useState(0);
 
   const results = useQuery({
-    queryKey: ["screener", activePreset, filters],
+    queryKey: ["screener", activePreset, filters, runCount],
     queryFn: () =>
       activePreset
         ? api.screenerPreset(activePreset)
         : api.runScreener(filters),
-    enabled: !!(activePreset || Object.keys(filters).length > 0),
+    enabled: !!(activePreset || runCount > 0),
   });
 
   function handlePreset(name: string) {
@@ -227,7 +228,7 @@ export default function ScreenerPage() {
               icon={<Play size={12} />}
               onClick={() => {
                 setActivePreset(null);
-                // triggers refetch via queryKey change
+                setRunCount((c) => c + 1);
               }}
             >
               Run Screener

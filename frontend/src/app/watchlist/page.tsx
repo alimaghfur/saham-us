@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import {
@@ -35,9 +35,16 @@ function saveWatchlist(list: string[]) {
 }
 
 export default function WatchlistPage() {
-  const [symbols, setSymbols] = useState<string[]>(getWatchlist);
+  const [symbols, setSymbols] = useState<string[]>([]);
   const [input, setInput] = useState("");
   const [showAdd, setShowAdd] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  // Load from localStorage after mount to avoid hydration mismatch
+  React.useEffect(() => {
+    setSymbols(getWatchlist());
+    setMounted(true);
+  }, []);
 
   function addSymbol(e: React.FormEvent) {
     e.preventDefault();
