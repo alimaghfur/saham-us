@@ -104,4 +104,10 @@ export const api = {
       body: JSON.stringify(params),
     }),
   backtestStrategies: () => fetchJson<any[]>(`${BASE}/backtest/strategies`),
+
+  // --- score & recommendations ---
+  stockScore: (symbol: string) =>
+    fetchJson<any>(`${BASE}/score/${symbol}`),
+  recommendations: (style: string = "balanced", limit: number = 5) =>
+    fetchJson<any[]>(`${BASE}/score/recommendations/top?style=${style}&limit=${limit}`),
 };
