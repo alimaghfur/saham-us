@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import asyncio
-import statistics
 from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, Query
@@ -217,7 +216,7 @@ def _get_rating(score: int) -> tuple[str, str]:
         return "Strong Sell", "bear"
 
 
-@router.get("/{symbol}", response_model=StockScore)
+@router.get("/analyze/{symbol}", response_model=StockScore)
 async def get_stock_score(symbol: str):
     """Compute a comprehensive score for a single stock."""
     cache = get_cache()
@@ -255,9 +254,9 @@ async def get_stock_score(symbol: str):
     # Risk level
     if f.debt_to_equity and f.debt_to_equity > 150:
         risk = "High"
-    elif f.beta and f.beta > 1.5:
+    elif quote.beta and quote.beta > 1.5:
         risk = "High"
-    elif f.beta and f.beta < 0.8:
+    elif quote.beta and quote.beta < 0.8:
         risk = "Low"
     else:
         risk = "Medium"

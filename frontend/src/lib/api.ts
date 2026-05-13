@@ -107,7 +107,7 @@ export const api = {
 
   // --- score & recommendations ---
   stockScore: (symbol: string) =>
-    fetchJson<any>(`${BASE}/score/${symbol}`),
+    fetchJson<any>(`${BASE}/score/analyze/${symbol}`),
   recommendations: (style: string = "balanced", limit: number = 5) =>
     fetchJson<any[]>(`${BASE}/score/recommendations/top?style=${style}&limit=${limit}`),
 };
