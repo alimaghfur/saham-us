@@ -26,8 +26,6 @@ async function fetchJson<T>(path: string, init?: RequestInit): Promise<T> {
       "Content-Type": "application/json",
       ...(init?.headers ?? {}),
     },
-    // On the server (RSC) we want fresh-ish data; cache briefly.
-    next: { revalidate: 30 },
   });
   if (!res.ok) {
     throw new Error(`API ${res.status}: ${await res.text()}`);

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import Link from "next/link";
@@ -23,6 +24,7 @@ import { PageHeader } from "@/components/PageHeader";
 import { Button } from "@/components/Button";
 import { Badge } from "@/components/Badge";
 import { Skeleton, SkeletonCard } from "@/components/Skeleton";
+import { PriceChart } from "@/components/PriceChart";
 import { api } from "@/lib/api";
 import {
   formatLargeNumber,
@@ -59,6 +61,23 @@ export default function StockDetailPage() {
   const technicals = useQuery({
     queryKey: ["technicals", symbol],
     queryFn: () => api.technicals(symbol),
+    enabled: !!symbol,
+  });
+
+  const [chartRange, setChartRange] = useState("1y");
+  const RANGES = [
+    { label: "1D", range: "1d", interval: "5m" },
+    { label: "5D", range: "5d", interval: "15m" },
+    { label: "1M", range: "1mo", interval: "1d" },
+    { label: "6M", range: "6mo", interval: "1d" },
+    { label: "1Y", range: "1y", interval: "1d" },
+    { label: "5Y", range: "5y", interval: "1wk" },
+  ];
+  const currentRange = RANGES.find((r) => r.range === chartRange) ?? RANGES[4];
+
+  const history = useQuery({
+    queryKey: ["history", symbol, currentRange.range, currentRange.interval],
+    queryFn: () => api.history(symbol, currentRange.range, currentRange.interval),
     enabled: !!symbol,
   });
 
@@ -151,6 +170,40 @@ export default function StockDetailPage() {
           </div>
         )
       )}
+
+      {/* Price Chart */}
+      <Card
+        title="Price Chart"
+        icon={<LineChart size={14} />}
+        action={
+          <div className="flex gap-1">
+            {RANGES.map((r) => (
+              <button
+                key={r.range}
+                onClick={() => setChartRange(r.range)}
+                className={cn(
+                  "rounded-lg px-2.5 py-1 text-[11px] font-medium transition-all",
+                  r.range === chartRange
+                    ? "bg-primary/20 text-primary"
+                    : "text-muted-foreground hover:bg-muted hover:text-foreground",
+                )}
+              >
+                {r.label}
+              </button>
+            ))}
+          </div>
+        }
+      >
+        {history.isLoading ? (
+          <div className="h-[400px] animate-pulse rounded-xl bg-muted/30" />
+        ) : history.data && history.data.candles.length > 0 ? (
+          <PriceChart candles={history.data.candles} height={400} />
+        ) : (
+          <div className="flex h-[400px] items-center justify-center text-sm text-muted-foreground">
+            No chart data available
+          </div>
+        )}
+      </Card>
 
       <div className="grid gap-4 lg:grid-cols-3">
         {/* Technical Indicators */}
@@ -257,6 +310,9 @@ export default function StockDetailPage() {
           </div>
         </Card>
       )}
+
+      {/* News */}
+      <NewsSection symbol={symbol} />
     </div>
   );
 }
@@ -336,5 +392,50 @@ function ProfileRow({
       <span className="text-muted-foreground">{label}:</span>
       <span className="font-medium">{value ?? "—"}</span>
     </div>
+  );
+}
+
+
+function NewsSection({ symbol }: { symbol: string }) {
+  const news = useQuery({
+    queryKey: ["news", symbol],
+    queryFn: () => api.news(symbol, 10),
+    enabled: !!symbol,
+  });
+
+  return (
+    <Card title="Recent News" icon={<ExternalLink size={14} />}>
+      {news.isLoading ? (
+        <div className="space-y-3">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="h-12 animate-pulse rounded-xl bg-muted/50" />
+          ))}
+        </div>
+      ) : news.data && news.data.length > 0 ? (
+        <div className="space-y-2">
+          {news.data.map((n, i) => (
+            <a
+              key={i}
+              href={n.link}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block rounded-xl px-3 py-3 transition-colors hover:bg-muted/30"
+            >
+              <h4 className="text-sm font-medium leading-snug hover:text-primary">
+                {n.title}
+              </h4>
+              <div className="mt-1 flex items-center gap-2 text-[11px] text-muted-foreground">
+                {n.publisher && <span>{n.publisher}</span>}
+                <ExternalLink size={10} />
+              </div>
+            </a>
+          ))}
+        </div>
+      ) : (
+        <p className="py-6 text-center text-sm text-muted-foreground">
+          No recent news found.
+        </p>
+      )}
+    </Card>
   );
 }
