@@ -110,4 +110,10 @@ export const api = {
     fetchJson<any>(`${BASE}/score/analyze/${symbol}`),
   recommendations: (style: string = "balanced", limit: number = 5) =>
     fetchJson<any[]>(`${BASE}/score/recommendations/top?style=${style}&limit=${limit}`),
+
+  // --- opportunities ---
+  buyTheDip: (minDrop: number = -3, minScore: number = 50) =>
+    fetchJson<any[]>(`${BASE}/opportunities/dips?min_drop=${minDrop}&min_score=${minScore}`),
+  comparePeers: (symbols: string[]) =>
+    fetchJson<any[]>(`${BASE}/opportunities/compare?symbols=${symbols.join(",")}`),
 };
