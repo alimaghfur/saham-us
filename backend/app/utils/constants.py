@@ -48,5 +48,11 @@ DEFAULT_UNIVERSE = [
     "SPY", "QQQ", "DIA", "IWM",  # ETFs for market breadth
 ]
 
-# Top movers universe — broader sampling, lighter list
-TOP_MOVERS_UNIVERSE = DEFAULT_UNIVERSE
+# Top movers universe — smaller list for faster loading, less rate limiting
+TOP_MOVERS_UNIVERSE = [
+    "AAPL", "MSFT", "GOOGL", "AMZN", "META", "NVDA", "TSLA", "AVGO",
+    "JPM", "V", "MA", "UNH", "LLY", "WMT", "HD",
+    "XOM", "CVX", "BA", "CAT", "GE",
+    "NFLX", "AMD", "CRM", "ORCL", "ADBE",
+    "PG", "KO", "MCD", "NKE", "DIS",
+]

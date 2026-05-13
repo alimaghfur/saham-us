@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import logging
 import math
+import time
 from typing import Any, Dict, List, Optional
 
 import yfinance as yf
@@ -20,6 +21,10 @@ from app.schemas.stock import (
 )
 
 log = logging.getLogger(__name__)
+
+# Retry config for rate-limited requests
+MAX_RETRIES = 2
+RETRY_DELAY = 1.0  # seconds between retries
 
 
 def _safe_float(value: Any) -> Optional[float]:
@@ -47,56 +52,61 @@ class YFinanceAdapter:
         """Return the current quote for `symbol`.
 
         yfinance's `fast_info` is fastest; falls back to `info` for
-        some metadata if missing.
+        some metadata if missing. Retries on failure.
         """
-        try:
-            ticker = yf.Ticker(symbol)
-            fast = ticker.fast_info
-            info: Dict[str, Any] = {}
+        for attempt in range(MAX_RETRIES + 1):
             try:
-                info = ticker.info or {}
-            except Exception:  # pragma: no cover - info is flaky
-                info = {}
+                ticker = yf.Ticker(symbol)
+                fast = ticker.fast_info
+                info: Dict[str, Any] = {}
+                try:
+                    info = ticker.info or {}
+                except Exception:  # pragma: no cover - info is flaky
+                    info = {}
 
-            last_price = _safe_float(getattr(fast, "last_price", None))
-            prev_close = _safe_float(getattr(fast, "previous_close", None))
-            change = None
-            change_pct = None
-            if last_price is not None and prev_close not in (None, 0):
-                change = last_price - prev_close
-                change_pct = (change / prev_close) * 100
+                last_price = _safe_float(getattr(fast, "last_price", None))
+                prev_close = _safe_float(getattr(fast, "previous_close", None))
+                change = None
+                change_pct = None
+                if last_price is not None and prev_close not in (None, 0):
+                    change = last_price - prev_close
+                    change_pct = (change / prev_close) * 100
 
-            return Quote(
-                symbol=symbol.upper(),
-                name=info.get("longName") or info.get("shortName"),
-                price=last_price,
-                change=change,
-                change_percent=change_pct,
-                previous_close=prev_close,
-                open=_safe_float(getattr(fast, "open", None)),
-                day_high=_safe_float(getattr(fast, "day_high", None)),
-                day_low=_safe_float(getattr(fast, "day_low", None)),
-                volume=_safe_int(getattr(fast, "last_volume", None)),
-                avg_volume=_safe_int(info.get("averageVolume")),
-                market_cap=_safe_float(
-                    getattr(fast, "market_cap", None) or info.get("marketCap")
-                ),
-                pe_ratio=_safe_float(info.get("trailingPE")),
-                eps=_safe_float(info.get("trailingEps")),
-                dividend_yield=_safe_float(info.get("dividendYield")),
-                beta=_safe_float(info.get("beta")),
-                week52_high=_safe_float(
-                    getattr(fast, "year_high", None) or info.get("fiftyTwoWeekHigh")
-                ),
-                week52_low=_safe_float(
-                    getattr(fast, "year_low", None) or info.get("fiftyTwoWeekLow")
-                ),
-                currency=info.get("currency") or getattr(fast, "currency", None),
-                exchange=info.get("exchange") or getattr(fast, "exchange", None),
-            )
-        except Exception as exc:
-            log.warning("yfinance get_quote(%s) failed: %s", symbol, exc)
-            return Quote(symbol=symbol.upper())
+                return Quote(
+                    symbol=symbol.upper(),
+                    name=info.get("longName") or info.get("shortName"),
+                    price=last_price,
+                    change=change,
+                    change_percent=change_pct,
+                    previous_close=prev_close,
+                    open=_safe_float(getattr(fast, "open", None)),
+                    day_high=_safe_float(getattr(fast, "day_high", None)),
+                    day_low=_safe_float(getattr(fast, "day_low", None)),
+                    volume=_safe_int(getattr(fast, "last_volume", None)),
+                    avg_volume=_safe_int(info.get("averageVolume")),
+                    market_cap=_safe_float(
+                        getattr(fast, "market_cap", None) or info.get("marketCap")
+                    ),
+                    pe_ratio=_safe_float(info.get("trailingPE")),
+                    eps=_safe_float(info.get("trailingEps")),
+                    dividend_yield=_safe_float(info.get("dividendYield")),
+                    beta=_safe_float(info.get("beta")),
+                    week52_high=_safe_float(
+                        getattr(fast, "year_high", None) or info.get("fiftyTwoWeekHigh")
+                    ),
+                    week52_low=_safe_float(
+                        getattr(fast, "year_low", None) or info.get("fiftyTwoWeekLow")
+                    ),
+                    currency=info.get("currency") or getattr(fast, "currency", None),
+                    exchange=info.get("exchange") or getattr(fast, "exchange", None),
+                )
+            except Exception as exc:
+                if attempt < MAX_RETRIES:
+                    log.debug("yfinance get_quote(%s) attempt %d failed: %s, retrying...", symbol, attempt + 1, exc)
+                    time.sleep(RETRY_DELAY)
+                else:
+                    log.warning("yfinance get_quote(%s) failed after %d attempts: %s", symbol, MAX_RETRIES + 1, exc)
+                    return Quote(symbol=symbol.upper())
 
     def get_profile(self, symbol: str) -> CompanyProfile:
         try:

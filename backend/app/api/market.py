@@ -24,14 +24,17 @@ async def get_indices():
     service = get_market_data_service()
 
     async def _one(symbol: str, name: str) -> IndexSnapshot:
-        q = await service.quote(symbol)
-        return IndexSnapshot(
-            symbol=symbol,
-            name=name,
-            price=q.price,
-            change=q.change,
-            change_percent=q.change_percent,
-        )
+        try:
+            q = await service.quote(symbol)
+            return IndexSnapshot(
+                symbol=symbol,
+                name=name,
+                price=q.price,
+                change=q.change,
+                change_percent=q.change_percent,
+            )
+        except Exception:
+            return IndexSnapshot(symbol=symbol, name=name)
 
     return await asyncio.gather(*(_one(s, n) for s, n in INDEX_SYMBOLS))
 
@@ -45,17 +48,20 @@ async def get_movers(
     service = get_market_data_service()
 
     async def _one(symbol: str) -> MarketMover | None:
-        q = await service.quote(symbol)
-        if q.change_percent is None:
+        try:
+            q = await service.quote(symbol)
+            if q.change_percent is None:
+                return None
+            return MarketMover(
+                symbol=q.symbol,
+                name=q.name,
+                price=q.price,
+                change=q.change,
+                change_percent=q.change_percent,
+                volume=q.volume,
+            )
+        except Exception:
             return None
-        return MarketMover(
-            symbol=q.symbol,
-            name=q.name,
-            price=q.price,
-            change=q.change,
-            change_percent=q.change_percent,
-            volume=q.volume,
-        )
 
     rows = await asyncio.gather(*(_one(s) for s in TOP_MOVERS_UNIVERSE))
     movers = [r for r in rows if r is not None]
@@ -74,10 +80,13 @@ async def get_sectors():
     service = get_market_data_service()
 
     async def _one(sector: str, etf: str) -> SectorPerformance:
-        q = await service.quote(etf)
-        return SectorPerformance(
-            sector=sector, etf=etf, change_percent=q.change_percent
-        )
+        try:
+            q = await service.quote(etf)
+            return SectorPerformance(
+                sector=sector, etf=etf, change_percent=q.change_percent
+            )
+        except Exception:
+            return SectorPerformance(sector=sector, etf=etf, change_percent=None)
 
     rows = await asyncio.gather(*(_one(s, e) for s, e in SECTOR_ETFS))
     rows.sort(key=lambda r: r.change_percent or 0, reverse=True)

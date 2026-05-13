@@ -15,6 +15,10 @@ from app.schemas.stock import (
     Quote,
 )
 
+# Global semaphore to limit concurrent yfinance requests
+# Yahoo Finance throttles at ~5-10 concurrent connections
+_SEMAPHORE = asyncio.Semaphore(5)
+
 
 class MarketDataService:
     """High-level market data API used by routers."""
@@ -26,8 +30,9 @@ class MarketDataService:
 
     # ---- helpers ----
     async def _run(self, fn, *args, **kwargs):
-        """Offload blocking adapter calls to a thread."""
-        return await asyncio.to_thread(fn, *args, **kwargs)
+        """Offload blocking adapter calls to a thread with concurrency limit."""
+        async with _SEMAPHORE:
+            return await asyncio.to_thread(fn, *args, **kwargs)
 
     # ---- endpoints ----
     async def quote(self, symbol: str) -> Quote:

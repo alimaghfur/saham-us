@@ -37,10 +37,10 @@ class Settings(BaseSettings):
     database_url: str = ""
 
     # Cache TTL (seconds)
-    cache_ttl_quote: int = 15
-    cache_ttl_history: int = 60
-    cache_ttl_fundamentals: int = 86400
-    cache_ttl_news: int = 300
+    cache_ttl_quote: int = 60          # 1 min (was 15s — too aggressive)
+    cache_ttl_history: int = 300       # 5 min
+    cache_ttl_fundamentals: int = 86400  # 24h
+    cache_ttl_news: int = 600          # 10 min
 
     @property
     def cors_origins_list(self) -> List[str]:
