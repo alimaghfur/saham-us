@@ -7,7 +7,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app import __version__
-from app.api import market, scalping, screener, stocks, swing, technicals
+from app.api import backtest, macro, market, scalping, screener, stocks, swing, technicals
 from app.core.config import get_settings
 from app.core.logging import configure_logging
 
@@ -44,6 +44,8 @@ app.include_router(technicals.router, prefix=API_V1)
 app.include_router(screener.router, prefix=API_V1)
 app.include_router(swing.router, prefix=API_V1)
 app.include_router(scalping.router, prefix=API_V1)
+app.include_router(macro.router, prefix=API_V1)
+app.include_router(backtest.router, prefix=API_V1)
 
 
 @app.get("/", tags=["meta"])

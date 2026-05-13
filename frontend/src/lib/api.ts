@@ -90,4 +90,18 @@ export const api = {
   // --- scalping ---
   hotStocks: (limit = 25) =>
     fetchJson<MarketMover[]>(`${BASE}/scalping/hot?limit=${limit}`),
+
+  // --- macro ---
+  treasury: () => fetchJson<any[]>(`${BASE}/macro/treasury`),
+  macroIndicators: () => fetchJson<any[]>(`${BASE}/macro/indicators`),
+  fearGreed: () => fetchJson<any>(`${BASE}/macro/fear-greed`),
+  yieldCurve: () => fetchJson<any[]>(`${BASE}/macro/yield-curve`),
+
+  // --- backtest ---
+  runBacktest: (params: any) =>
+    fetchJson<any>(`${BASE}/backtest/run`, {
+      method: "POST",
+      body: JSON.stringify(params),
+    }),
+  backtestStrategies: () => fetchJson<any[]>(`${BASE}/backtest/strategies`),
 };
