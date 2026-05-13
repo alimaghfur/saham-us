@@ -73,7 +73,6 @@ export const menuSections: MenuSection[] = [
         name: "News & Research",
         href: "/news",
         icon: Newspaper,
-        badge: "Soon",
         description: "News, upgrades & downgrades",
       },
       {
@@ -122,14 +121,12 @@ export const menuSections: MenuSection[] = [
         name: "My Portfolio",
         href: "/portfolio",
         icon: PieChart,
-        badge: "Soon",
         description: "Holdings & P&L tracking",
       },
       {
         name: "Alerts",
         href: "/alerts",
         icon: Bell,
-        badge: "Soon",
         description: "Price & signal alerts",
       },
     ],
