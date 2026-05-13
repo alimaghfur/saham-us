@@ -1,0 +1,240 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Premium Dark Theme — Trading Terminal Pro */
+  --background: 8 10 15;
+  --foreground: 226 232 240;
+  --card: 13 17 28;
+  --card-hover: 18 22 36;
+  --border: 30 36 52;
+  --muted: 22 27 40;
+  --muted-foreground: 148 163 184;
+  --primary: 99 102 241;
+  --primary-foreground: 255 255 255;
+  --accent: 139 92 246;
+  --accent-foreground: 255 255 255;
+  --bull: 34 197 94;
+  --bear: 239 68 68;
+  --warning: 245 158 11;
+  --info: 56 189 248;
+  --ring: 99 102 241;
+  --sidebar: 10 12 20;
+  --sidebar-hover: 18 22 36;
+  --gradient-start: 99 102 241;
+  --gradient-end: 139 92 246;
+}
+
+.light {
+  --background: 248 250 252;
+  --foreground: 15 23 42;
+  --card: 255 255 255;
+  --card-hover: 248 250 252;
+  --border: 226 232 240;
+  --muted: 241 245 249;
+  --muted-foreground: 100 116 139;
+  --primary: 79 70 229;
+  --primary-foreground: 255 255 255;
+  --accent: 109 40 217;
+  --accent-foreground: 255 255 255;
+  --bull: 22 163 74;
+  --bear: 220 38 38;
+  --warning: 217 119 6;
+  --info: 14 165 233;
+  --ring: 79 70 229;
+  --sidebar: 255 255 255;
+  --sidebar-hover: 241 245 249;
+  --gradient-start: 79 70 229;
+  --gradient-end: 109 40 217;
+}
+
+@layer base {
+  html,
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    min-height: 100%;
+  }
+
+  * {
+    @apply border-border;
+  }
+}
+
+@layer components {
+  /* Glassmorphism card */
+  .glass {
+    @apply backdrop-blur-xl border border-white/[0.06];
+    background: linear-gradient(
+      135deg,
+      rgb(var(--card) / 0.8) 0%,
+      rgb(var(--card) / 0.4) 100%
+    );
+  }
+
+  .glass-hover {
+    @apply transition-all duration-300;
+  }
+  .glass-hover:hover {
+    @apply border-white/[0.12] shadow-lg;
+    background: linear-gradient(
+      135deg,
+      rgb(var(--card) / 0.9) 0%,
+      rgb(var(--card) / 0.6) 100%
+    );
+  }
+
+  /* Gradient text */
+  .gradient-text {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(
+      135deg,
+      rgb(var(--gradient-start)),
+      rgb(var(--gradient-end))
+    );
+  }
+
+  /* Gradient border */
+  .gradient-border {
+    position: relative;
+  }
+  .gradient-border::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      135deg,
+      rgb(var(--gradient-start) / 0.5),
+      rgb(var(--gradient-end) / 0.3)
+    );
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+  }
+
+  /* Glow effect */
+  .glow {
+    box-shadow: 0 0 20px rgb(var(--primary) / 0.15),
+                0 0 40px rgb(var(--primary) / 0.05);
+  }
+
+  .glow-sm {
+    box-shadow: 0 0 10px rgb(var(--primary) / 0.1),
+                0 0 20px rgb(var(--primary) / 0.03);
+  }
+
+  /* Dot pattern background */
+  .dot-pattern {
+    background-image: radial-gradient(
+      rgb(var(--border) / 0.4) 1px,
+      transparent 1px
+    );
+    background-size: 24px 24px;
+  }
+
+  /* Shimmer loading animation */
+  .shimmer {
+    @apply relative overflow-hidden;
+  }
+  .shimmer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgb(var(--muted) / 0.3),
+      transparent
+    );
+    animation: shimmer 2s infinite;
+  }
+
+  /* Number formatting */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Custom scrollbar */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(var(--border)) transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: rgb(var(--border));
+    border-radius: 3px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: rgb(var(--muted-foreground) / 0.5);
+  }
+
+  /* Pulse dot for live indicators */
+  .pulse-dot {
+    @apply relative;
+  }
+  .pulse-dot::after {
+    content: '';
+    @apply absolute -right-1 -top-1 h-2 w-2 rounded-full bg-bull;
+    animation: pulse-ring 2s ease-out infinite;
+  }
+
+  /* Status indicator */
+  .status-live {
+    @apply inline-flex items-center gap-1.5 text-xs font-medium text-bull;
+  }
+  .status-live::before {
+    content: '';
+    @apply h-1.5 w-1.5 rounded-full bg-bull;
+    animation: pulse-ring 2s ease-out infinite;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes pulse-ring {
+  0% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; }
+  100% { opacity: 0; transform: scale(2); }
+}
+
+/* Global scrollbar for dark theme */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgb(var(--border));
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgb(var(--muted-foreground) / 0.5);
+}
+
+/* Selection */
+::selection {
+  background: rgb(var(--primary) / 0.3);
+  color: rgb(var(--foreground));
+}
