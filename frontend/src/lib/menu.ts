@@ -3,6 +3,7 @@ import {
   BarChart3,
   Bell,
   BookOpen,
+  Calculator,
   Eye,
   Filter,
   Gauge,
@@ -51,9 +52,9 @@ export const menuSections: MenuSection[] = [
     items: [
       { name: "Stock Score", href: "/score", icon: Target, badge: "New", description: "Skor saham 1-100" },
       { name: "Rekomendasi", href: "/recommendations", icon: Star, badge: "New", description: "Top picks hari ini" },
-      { name: "Screener", href: "/screener", icon: Filter, description: "Filter saham multi-kriteria" },
-      { name: "Buy the Dip", href: "/opportunities", icon: TrendingDown, badge: "New", description: "Saham bagus lagi diskon" },
+      { name: "Buy the Dip", href: "/opportunities", icon: TrendingDown, description: "Saham bagus lagi diskon" },
       { name: "Perbandingan", href: "/compare", icon: BarChart3, description: "Compare saham side-by-side" },
+      { name: "Screener", href: "/screener", icon: Filter, description: "Filter saham multi-kriteria" },
       { name: "AI Insights", href: "/ai", icon: Sparkles, badge: "AI", description: "Natural language screener" },
       { name: "News", href: "/news", icon: Newspaper, description: "Berita & riset" },
     ],
@@ -64,21 +65,23 @@ export const menuSections: MenuSection[] = [
       { name: "Swing Trading", href: "/swing", icon: TrendingUp, description: "Breakout & pullback setups" },
       { name: "Scalping", href: "/scalping", icon: Zap, description: "Momentum & hot stocks" },
       { name: "Backtesting", href: "/backtest", icon: TestTube, description: "Simulasi strategi" },
+      { name: "Position Calculator", href: "/calculator", icon: Calculator, badge: "New", description: "Hitung lot aman" },
     ],
   },
   {
     label: "Portfolio",
     items: [
-      { name: "Paper Trading", href: "/paper-trading", icon: Trophy, badge: "New", description: "Latihan $100K virtual" },
-      { name: "Watchlist", href: "/watchlist", icon: Eye, description: "Track saham favorit" },
+      { name: "Watchlist", href: "/watchlist", icon: Eye, description: "Track + auto-score" },
+      { name: "Paper Trading", href: "/paper-trading", icon: Trophy, description: "Latihan $100K virtual" },
       { name: "Portfolio", href: "/portfolio", icon: PieChart, description: "Holdings & P&L" },
+      { name: "Trading Journal", href: "/journal", icon: BookOpen, badge: "New", description: "Catat & review trade" },
       { name: "Alerts", href: "/alerts", icon: Bell, description: "Notifikasi harga" },
     ],
   },
   {
     label: "Belajar",
     items: [
-      { name: "Panduan Investasi", href: "/education", icon: GraduationCap, badge: "New", description: "Glossary & strategi" },
+      { name: "Panduan Investasi", href: "/education", icon: GraduationCap, description: "Glossary & strategi" },
     ],
   },
   {
