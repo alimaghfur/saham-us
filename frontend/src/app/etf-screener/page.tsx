@@ -86,13 +86,13 @@ export default function ETFScreenerPage() {
                           {etf.symbol}
                           {etf.best_performer && <Star size={12} className="ml-1 inline text-yellow-500" />}
                         </td>
-                        <td className="py-3 pr-4 text-right tabular-nums">{etf.expense_ratio != null ? `${(etf.expense_ratio * 100).toFixed(2)}%` : "—"}</td>
-                        <td className={cn("py-3 pr-4 text-right tabular-nums", etf.return_1y > 0 ? "text-bull" : "text-bear")}>
-                          {etf.return_1y != null ? `${(etf.return_1y * 100).toFixed(1)}%` : "—"}
+                        <td className="py-3 pr-4 text-right tabular-nums">{etf.expense_ratio != null ? `${(etf.expense_ratio).toFixed(2)}%` : "—"}</td>
+                        <td className={cn("py-3 pr-4 text-right tabular-nums", etf.performance?.return_1y > 0 ? "text-bull" : "text-bear")}>
+                          {etf.performance?.return_1y != null ? `${(etf.performance?.return_1y).toFixed(1)}%` : "—"}
                         </td>
-                        <td className="py-3 pr-4 text-right tabular-nums">{etf.sharpe?.toFixed(2) ?? "—"}</td>
+                        <td className="py-3 pr-4 text-right tabular-nums">{etf.performance?.sharpe_ratio_1y?.toFixed(2) ?? "—"}</td>
                         <td className="py-3 pr-4 text-right tabular-nums text-muted-foreground">{etf.aum ? `$${(etf.aum / 1e9).toFixed(0)}B` : "—"}</td>
-                        <td className="py-3 pr-4 text-right tabular-nums">{etf.beta?.toFixed(2) ?? "—"}</td>
+                        <td className="py-3 pr-4 text-right tabular-nums">{etf.performance?.beta?.toFixed(2) ?? "—"}</td>
                         <td className="py-3">
                           <Badge variant={etf.rating === "Strong Buy" ? "success" : etf.rating === "Sell" ? "danger" : "default"}>
                             {etf.rating ?? "—"}

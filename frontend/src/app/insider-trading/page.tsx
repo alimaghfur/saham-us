@@ -84,20 +84,20 @@ export default function InsiderTradingPage() {
             </Card>
             <Card>
               <div className="text-center">
-                <div className="text-2xl font-bold text-bull tabular-nums">{data.buy_count ?? 0}</div>
-                <div className="mt-1 text-xs text-muted-foreground">Buys</div>
+                <div className="text-2xl font-bold text-bull tabular-nums">{data.buy_count_90d ?? 0}</div>
+                <div className="mt-1 text-xs text-muted-foreground">Buys (90d)</div>
               </div>
             </Card>
             <Card>
               <div className="text-center">
-                <div className="text-2xl font-bold text-bear tabular-nums">{data.sell_count ?? 0}</div>
-                <div className="mt-1 text-xs text-muted-foreground">Sells</div>
+                <div className="text-2xl font-bold text-bear tabular-nums">{data.sell_count_90d ?? 0}</div>
+                <div className="mt-1 text-xs text-muted-foreground">Sells (90d)</div>
               </div>
             </Card>
           </div>
 
           {/* Recent Transactions */}
-          {data.transactions?.length > 0 && (
+          {data.notable_transactions?.length > 0 && (
             <Card title="Recent Transactions" icon={<Eye size={14} />}>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
@@ -112,15 +112,15 @@ export default function InsiderTradingPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border/20">
-                    {data.transactions.slice(0, 15).map((t: any, i: number) => (
+                    {data.notable_transactions.slice(0, 15).map((t: any, i: number) => (
                       <tr key={i} className="transition-colors hover:bg-muted/30">
-                        <td className="py-3 pr-4 font-medium">{t.name}</td>
+                        <td className="py-3 pr-4 font-medium">{t.insider_name}</td>
                         <td className="py-3 pr-4 text-xs text-muted-foreground">{t.title}</td>
                         <td className="py-3 pr-4">
-                          <Badge variant={t.type === "Buy" ? "success" : "danger"}>{t.type}</Badge>
+                          <Badge variant={t.transaction_type === "Buy" ? "success" : "danger"}>{t.transaction_type}</Badge>
                         </td>
                         <td className="py-3 pr-4 text-right tabular-nums">{t.shares?.toLocaleString()}</td>
-                        <td className="py-3 pr-4 text-right tabular-nums">${formatPrice(t.price)}</td>
+                        <td className="py-3 pr-4 text-right tabular-nums">${t.price?.toFixed(2)}</td>
                         <td className="py-3 text-right text-xs text-muted-foreground">{t.date}</td>
                       </tr>
                     ))}

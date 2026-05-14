@@ -64,27 +64,27 @@ export default function DividendsPage() {
           <div className="grid gap-4 md:grid-cols-3 lg:grid-cols-6">
             <Card>
               <div className="text-center">
-                <div className="text-2xl font-bold text-bull tabular-nums">{data.current_yield != null ? `${(data.current_yield * 100).toFixed(2)}%` : "—"}</div>
+                <div className="text-2xl font-bold text-bull tabular-nums">{data.current_yield != null ? `${(data.current_yield).toFixed(2)}%` : "—"}</div>
                 <div className="mt-1 text-xs text-muted-foreground">Current Yield</div>
               </div>
             </Card>
             <Card>
               <div className="text-center">
-                <div className="text-2xl font-bold tabular-nums">${data.annual_dividend?.toFixed(2) ?? "—"}</div>
+                <div className="text-2xl font-bold tabular-nums">${data.current_annual_dividend?.toFixed(2) ?? "—"}</div>
                 <div className="mt-1 text-xs text-muted-foreground">Annual Dividend</div>
               </div>
             </Card>
             <Card>
               <div className="text-center">
-                <div className={cn("text-2xl font-bold tabular-nums", data.payout_ratio > 0.8 ? "text-bear" : "text-bull")}>
-                  {data.payout_ratio != null ? `${(data.payout_ratio * 100).toFixed(0)}%` : "—"}
+                <div className={cn("text-2xl font-bold tabular-nums", data.payout_ratio > 80 ? "text-bear" : "text-bull")}>
+                  {data.payout_ratio != null ? `${(data.payout_ratio).toFixed(0)}%` : "—"}
                 </div>
                 <div className="mt-1 text-xs text-muted-foreground">Payout Ratio</div>
               </div>
             </Card>
             <Card>
               <div className="text-center">
-                <div className="text-2xl font-bold text-primary tabular-nums">{data.growth_rate != null ? `${(data.growth_rate * 100).toFixed(1)}%` : "—"}</div>
+                <div className="text-2xl font-bold text-primary tabular-nums">{data.growth_rate != null ? `${(data.dividend_growth_rate_5y).toFixed(1)}%` : "—"}</div>
                 <div className="mt-1 text-xs text-muted-foreground">Growth Rate</div>
               </div>
             </Card>
@@ -96,7 +96,7 @@ export default function DividendsPage() {
             </Card>
             <Card>
               <div className="text-center">
-                {data.is_aristocrat ? (
+                {data.is_dividend_aristocrat ? (
                   <Badge variant="success" className="text-sm"><Star size={12} className="mr-1 inline" />Aristocrat</Badge>
                 ) : (
                   <Badge variant="default">Standard</Badge>
@@ -111,15 +111,15 @@ export default function DividendsPage() {
             <Card title="DRIP Simulation (20yr)" icon={<LineChart size={14} />} subtitle="$10k initial + $500/mo">
               <div className="grid gap-4 md:grid-cols-3">
                 <div className="text-center rounded-xl border border-border/30 p-4">
-                  <div className="text-2xl font-bold text-bull tabular-nums">${drip.final_value?.toLocaleString() ?? "—"}</div>
+                  <div className="text-2xl font-bold text-bull tabular-nums">${drip.final_portfolio_value?.toLocaleString() ?? "—"}</div>
                   <div className="mt-1 text-xs text-muted-foreground">Final Value</div>
                 </div>
                 <div className="text-center rounded-xl border border-border/30 p-4">
-                  <div className="text-2xl font-bold tabular-nums">{drip.total_return != null ? `${(drip.total_return * 100).toFixed(0)}%` : "—"}</div>
+                  <div className="text-2xl font-bold tabular-nums">{drip.total_return != null ? `${(drip.total_return_pct).toFixed(0)}%` : "—"}</div>
                   <div className="mt-1 text-xs text-muted-foreground">Total Return</div>
                 </div>
                 <div className="text-center rounded-xl border border-border/30 p-4">
-                  <div className="text-2xl font-bold text-primary tabular-nums">{drip.annualized_return != null ? `${(drip.annualized_return * 100).toFixed(1)}%` : "—"}</div>
+                  <div className="text-2xl font-bold text-primary tabular-nums">{drip.annualized_return != null ? `${(drip.annualized_return_pct).toFixed(1)}%` : "—"}</div>
                   <div className="mt-1 text-xs text-muted-foreground">Annualized Return</div>
                 </div>
               </div>

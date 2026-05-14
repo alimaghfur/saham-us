@@ -47,24 +47,24 @@ export default function MarketBreadthPage() {
             </Card>
             <Card>
               <div className="text-center">
-                <div className={cn("text-3xl font-bold tabular-nums", data.mcclellan_oscillator > 0 ? "text-bull" : "text-bear")}>
-                  {data.mcclellan_oscillator?.toFixed(0) ?? "—"}
+                <div className={cn("text-3xl font-bold tabular-nums", data.mcclellan?.current_value > 0 ? "text-bull" : "text-bear")}>
+                  {data.mcclellan?.current_value?.toFixed(0) ?? "—"}
                 </div>
                 <div className="mt-1 text-xs text-muted-foreground">McClellan Osc.</div>
-                {data.mcclellan_interpretation && (
-                  <div className="mt-1 text-[10px] text-muted-foreground">{data.mcclellan_interpretation}</div>
+                {data.mcclellan?.interpretation && (
+                  <div className="mt-1 text-[10px] text-muted-foreground">{data.mcclellan?.interpretation}</div>
                 )}
               </div>
             </Card>
             <Card>
               <div className="text-center">
-                <div className="text-2xl font-bold text-bull tabular-nums">{data.new_highs ?? 0}</div>
+                <div className="text-2xl font-bold text-bull tabular-nums">{data.new_highs_lows?.new_highs ?? 0}</div>
                 <div className="mt-1 text-xs text-muted-foreground">New Highs</div>
               </div>
             </Card>
             <Card>
               <div className="text-center">
-                <div className="text-2xl font-bold text-bear tabular-nums">{data.new_lows ?? 0}</div>
+                <div className="text-2xl font-bold text-bear tabular-nums">{data.new_highs_lows?.new_lows ?? 0}</div>
                 <div className="mt-1 text-xs text-muted-foreground">New Lows</div>
               </div>
             </Card>

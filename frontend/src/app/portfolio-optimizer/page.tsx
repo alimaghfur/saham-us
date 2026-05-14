@@ -51,10 +51,10 @@ export default function PortfolioOptimizerPage() {
       {data && (
         <div className="space-y-6">
           {/* Max Sharpe */}
-          {data.max_sharpe && (
-            <Card title="Max Sharpe Portfolio" icon={<Target size={14} />} subtitle={`Sharpe: ${data.max_sharpe.sharpe?.toFixed(2)} | Return: ${(data.max_sharpe.expected_return * 100).toFixed(1)}% | Risk: ${(data.max_sharpe.volatility * 100).toFixed(1)}%`}>
+          {data.max_sharpe_portfolio && (
+            <Card title="Max Sharpe Portfolio" icon={<Target size={14} />} subtitle={`Sharpe: ${data.max_sharpe_portfolio.sharpe_ratio?.toFixed(2)} | Return: ${(data.max_sharpe_portfolio.expected_return * 100).toFixed(1)}% | Risk: ${(data.max_sharpe_portfolio.volatility * 100).toFixed(1)}%`}>
               <div className="space-y-2">
-                {data.max_sharpe.weights && Object.entries(data.max_sharpe.weights).map(([sym, weight]: [string, any]) => (
+                {data.max_sharpe_portfolio.weights && Object.entries(data.max_sharpe_portfolio.weights).map(([sym, weight]: [string, any]) => (
                   <div key={sym} className="flex items-center gap-3">
                     <span className="w-14 text-sm font-semibold">{sym}</span>
                     <div className="h-4 flex-1 overflow-hidden rounded-full bg-muted/50">
@@ -68,10 +68,10 @@ export default function PortfolioOptimizerPage() {
           )}
 
           {/* Min Variance */}
-          {data.min_variance && (
-            <Card title="Min Variance Portfolio" icon={<Calculator size={14} />} subtitle={`Sharpe: ${data.min_variance.sharpe?.toFixed(2)} | Return: ${(data.min_variance.expected_return * 100).toFixed(1)}% | Risk: ${(data.min_variance.volatility * 100).toFixed(1)}%`}>
+          {data.min_variance_portfolio && (
+            <Card title="Min Variance Portfolio" icon={<Calculator size={14} />} subtitle={`Sharpe: ${data.min_variance_portfolio.sharpe_ratio?.toFixed(2)} | Return: ${(data.min_variance_portfolio.expected_return * 100).toFixed(1)}% | Risk: ${(data.min_variance_portfolio.volatility * 100).toFixed(1)}%`}>
               <div className="space-y-2">
-                {data.min_variance.weights && Object.entries(data.min_variance.weights).map(([sym, weight]: [string, any]) => (
+                {data.min_variance_portfolio.weights && Object.entries(data.min_variance_portfolio.weights).map(([sym, weight]: [string, any]) => (
                   <div key={sym} className="flex items-center gap-3">
                     <span className="w-14 text-sm font-semibold">{sym}</span>
                     <div className="h-4 flex-1 overflow-hidden rounded-full bg-muted/50">
@@ -99,11 +99,11 @@ export default function PortfolioOptimizerPage() {
                     {symbols.map((row, ri) => (
                       <tr key={row} className="border-b border-border/10">
                         <td className="py-2 pr-3 font-semibold">{row}</td>
-                        {symbols.map((col, ci) => {
-                          const val = data.correlation_matrix[ri]?.[ci] ?? 0;
+                        {symbols.map((col) => {
+                          const val = data.correlation_matrix?.[row]?.[col] ?? 0;
                           return (
                             <td key={col} className={cn("py-2 px-2 text-center tabular-nums", val > 0.7 ? "text-bear" : val < 0.3 ? "text-bull" : "text-muted-foreground")}>
-                              {val.toFixed(2)}
+                              {typeof val === "number" ? val.toFixed(2) : "—"}
                             </td>
                           );
                         })}
@@ -134,7 +134,7 @@ export default function PortfolioOptimizerPage() {
                         <td className="py-3 pr-4 font-semibold">{s.symbol}</td>
                         <td className={cn("py-3 pr-4 text-right tabular-nums", s.expected_return > 0 ? "text-bull" : "text-bear")}>{(s.expected_return * 100).toFixed(1)}%</td>
                         <td className="py-3 pr-4 text-right tabular-nums text-muted-foreground">{(s.volatility * 100).toFixed(1)}%</td>
-                        <td className="py-3 text-right tabular-nums">{s.sharpe?.toFixed(2)}</td>
+                        <td className="py-3 text-right tabular-nums">{s.sharpe_ratio?.toFixed(2)}</td>
                       </tr>
                     ))}
                   </tbody>

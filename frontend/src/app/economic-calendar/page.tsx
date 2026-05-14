@@ -58,7 +58,7 @@ export default function EconomicCalendarPage() {
                     <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-bear/10"><Bell size={18} className="text-bear" /></div>
                     <div>
                       <div className="text-sm font-semibold">Next FOMC</div>
-                      <div className="text-xs text-muted-foreground">{data.next_fomc}</div>
+                      <div className="text-xs text-muted-foreground">{data.next_fomc.date}</div>
                     </div>
                   </div>
                 </Card>
@@ -69,7 +69,7 @@ export default function EconomicCalendarPage() {
                     <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10"><Activity size={18} className="text-primary" /></div>
                     <div>
                       <div className="text-sm font-semibold">Next NFP</div>
-                      <div className="text-xs text-muted-foreground">{data.next_nfp}</div>
+                      <div className="text-xs text-muted-foreground">{data.next_nfp.date}</div>
                     </div>
                   </div>
                 </Card>
@@ -80,7 +80,7 @@ export default function EconomicCalendarPage() {
                     <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-yellow-500/10"><AlertTriangle size={18} className="text-yellow-500" /></div>
                     <div>
                       <div className="text-sm font-semibold">Next CPI</div>
-                      <div className="text-xs text-muted-foreground">{data.next_cpi}</div>
+                      <div className="text-xs text-muted-foreground">{data.next_cpi.date}</div>
                     </div>
                   </div>
                 </Card>

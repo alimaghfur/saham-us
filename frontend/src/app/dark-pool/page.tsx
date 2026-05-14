@@ -57,7 +57,7 @@ export default function DarkPoolPage() {
           <div className="grid gap-4 md:grid-cols-4">
             <Card>
               <div className="text-center">
-                <div className="text-3xl font-bold tabular-nums text-primary">{data.dark_pool_volume_pct?.toFixed(1) ?? "—"}%</div>
+                <div className="text-3xl font-bold tabular-nums text-primary">{data.dark_pool_pct_of_total?.toFixed(1) ?? "—"}%</div>
                 <div className="mt-1 text-xs text-muted-foreground">Dark Pool Volume</div>
               </div>
             </Card>
@@ -94,10 +94,10 @@ export default function DarkPoolPage() {
                 {data.whale_alerts.slice(0, 8).map((w: any, i: number) => (
                   <div key={i} className="flex items-center justify-between rounded-xl border border-border/30 p-3">
                     <div className="flex items-center gap-2">
-                      <Badge variant={w.type === "Buy" ? "success" : "danger"}>{w.type}</Badge>
+                      <Badge variant={w.direction === "Bullish" ? "success" : w.direction === "Bearish" ? "danger" : "default"}>{w.direction}</Badge>
                       <span className="text-sm">{w.description ?? `${w.shares?.toLocaleString()} shares`}</span>
                     </div>
-                    <span className="text-xs text-muted-foreground">${w.value?.toLocaleString()}</span>
+                    <span className="text-xs text-muted-foreground">${w.notional_value?.toLocaleString()}</span>
                   </div>
                 ))}
               </div>
@@ -120,10 +120,10 @@ export default function DarkPoolPage() {
                   <tbody className="divide-y divide-border/20">
                     {data.top_holders.slice(0, 10).map((h: any, i: number) => (
                       <tr key={i} className="transition-colors hover:bg-muted/30">
-                        <td className="py-3 pr-4 font-medium">{h.name}</td>
-                        <td className="py-3 pr-4 text-right tabular-nums">{h.shares?.toLocaleString()}</td>
-                        <td className="py-3 pr-4 text-right tabular-nums">${h.value?.toLocaleString()}</td>
-                        <td className="py-3 text-right tabular-nums text-muted-foreground">{h.pct_portfolio?.toFixed(2)}%</td>
+                        <td className="py-3 pr-4 font-medium">{h.institution_name}</td>
+                        <td className="py-3 pr-4 text-right tabular-nums">{h.shares_held?.toLocaleString()}</td>
+                        <td className="py-3 pr-4 text-right tabular-nums">${h.market_value?.toLocaleString()}</td>
+                        <td className="py-3 text-right tabular-nums text-muted-foreground">{h.percent_of_portfolio?.toFixed(2)}%</td>
                       </tr>
                     ))}
                   </tbody>

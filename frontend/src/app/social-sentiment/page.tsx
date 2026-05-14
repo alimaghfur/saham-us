@@ -88,13 +88,13 @@ export default function SocialSentimentPage() {
           {/* Platform Breakdown */}
           <Card title="Platform Breakdown" icon={<Globe size={14} />}>
             <div className="space-y-3">
-              {data.platforms?.map((p: any) => (
+              {data.platform_breakdown?.map((p: any) => (
                 <div key={p.platform} className="flex items-center justify-between rounded-xl border border-border/30 p-3">
                   <span className="text-sm font-medium">{p.platform}</span>
                   <div className="flex items-center gap-3">
-                    <span className="text-xs text-muted-foreground">{p.mentions} mentions</span>
-                    <Badge variant={p.sentiment > 0.1 ? "success" : p.sentiment < -0.1 ? "danger" : "default"}>
-                      {(p.sentiment * 100).toFixed(0)}%
+                    <span className="text-xs text-muted-foreground">{p.mention_count} mentions</span>
+                    <Badge variant={p.sentiment_score > 0.1 ? "success" : p.sentiment_score < -0.1 ? "danger" : "default"}>
+                      {(p.sentiment_score * 100).toFixed(0)}%
                     </Badge>
                   </div>
                 </div>
@@ -109,9 +109,9 @@ export default function SocialSentimentPage() {
                 {data.top_mentions.slice(0, 10).map((m: any, i: number) => (
                   <div key={i} className="flex items-center gap-3 rounded-xl border border-border/30 p-3">
                     <span className="text-xs text-muted-foreground">#{i + 1}</span>
-                    <p className="flex-1 text-xs">{m.text?.slice(0, 120)}</p>
-                    <Badge variant={m.sentiment > 0 ? "success" : m.sentiment < 0 ? "danger" : "default"}>
-                      {m.source}
+                    <p className="flex-1 text-xs">{m.content_preview?.slice(0, 120)}</p>
+                    <Badge variant={m.sentiment_score > 0 ? "success" : m.sentiment_score < 0 ? "danger" : "default"}>
+                      {m.platform}
                     </Badge>
                   </div>
                 ))}

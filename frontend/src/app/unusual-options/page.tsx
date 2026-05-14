@@ -69,13 +69,13 @@ export default function UnusualOptionsPage() {
             </Card>
             <Card>
               <div className="text-center">
-                <div className="text-2xl font-bold text-bull tabular-nums">{data.bullish_flow?.toFixed(0) ?? "—"}%</div>
+                <div className="text-2xl font-bold text-bull tabular-nums">{data.bullish_flow_pct?.toFixed(0) ?? "—"}%</div>
                 <div className="mt-1 text-xs text-muted-foreground">Bullish Flow</div>
               </div>
             </Card>
             <Card>
               <div className="text-center">
-                <div className="text-2xl font-bold text-bear tabular-nums">{data.bearish_flow?.toFixed(0) ?? "—"}%</div>
+                <div className="text-2xl font-bold text-bear tabular-nums">{data.bearish_flow_pct?.toFixed(0) ?? "—"}%</div>
                 <div className="mt-1 text-xs text-muted-foreground">Bearish Flow</div>
               </div>
             </Card>
@@ -93,8 +93,8 @@ export default function UnusualOptionsPage() {
           )}
 
           {/* Unusual Activities Table */}
-          {data.activities?.length > 0 && (
-            <Card title="Unusual Activity" icon={<Zap size={14} />} subtitle={`${data.activities.length} unusual trades`}>
+          {data.unusual_activities?.length > 0 && (
+            <Card title="Unusual Activity" icon={<Zap size={14} />} subtitle={`${data.unusual_activities.length} unusual trades`}>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm">
                   <thead>
@@ -109,15 +109,15 @@ export default function UnusualOptionsPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border/20">
-                    {data.activities.slice(0, 15).map((a: any, i: number) => (
+                    {data.unusual_activities.slice(0, 15).map((a: any, i: number) => (
                       <tr key={i} className="transition-colors hover:bg-muted/30">
                         <td className="py-3 pr-4">
                           <Badge variant={a.contract_type === "Call" ? "success" : "danger"}>{a.contract_type}</Badge>
                         </td>
                         <td className="py-3 pr-4 tabular-nums">${a.strike}</td>
-                        <td className="py-3 pr-4 text-xs text-muted-foreground">{a.expiry}</td>
+                        <td className="py-3 pr-4 text-xs text-muted-foreground">{a.expiration}</td>
                         <td className="py-3 pr-4 text-right font-semibold tabular-nums">{a.volume_multiple?.toFixed(1)}x</td>
-                        <td className="py-3 pr-4 text-right tabular-nums">${a.premium?.toLocaleString()}</td>
+                        <td className="py-3 pr-4 text-right tabular-nums">${a.premium_total?.toLocaleString()}</td>
                         <td className="py-3 pr-4">
                           <Badge variant={a.sentiment === "Bullish" ? "success" : a.sentiment === "Bearish" ? "danger" : "default"}>{a.sentiment}</Badge>
                         </td>

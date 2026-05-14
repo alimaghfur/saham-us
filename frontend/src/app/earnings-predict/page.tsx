@@ -57,27 +57,27 @@ export default function EarningsPredictPage() {
           <div className="grid gap-4 md:grid-cols-4">
             <Card>
               <div className="text-center">
-                <div className="text-4xl font-bold text-bull tabular-nums">{(data.beat_probability * 100).toFixed(0)}%</div>
+                <div className="text-4xl font-bold text-bull tabular-nums">{(data.prediction?.beat_probability).toFixed(0)}%</div>
                 <div className="mt-1 text-xs text-muted-foreground">Beat Probability</div>
               </div>
             </Card>
             <Card>
               <div className="text-center">
-                <div className="text-3xl font-bold text-bear tabular-nums">{(data.miss_probability * 100).toFixed(0)}%</div>
+                <div className="text-3xl font-bold text-bear tabular-nums">{(data.prediction?.miss_probability).toFixed(0)}%</div>
                 <div className="mt-1 text-xs text-muted-foreground">Miss Probability</div>
               </div>
             </Card>
             <Card>
               <div className="text-center">
-                <div className={cn("text-3xl font-bold tabular-nums", data.expected_surprise > 0 ? "text-bull" : "text-bear")}>
-                  {data.expected_surprise > 0 ? "+" : ""}{(data.expected_surprise * 100).toFixed(1)}%
+                <div className={cn("text-3xl font-bold tabular-nums", data.prediction?.expected_surprise_pct > 0 ? "text-bull" : "text-bear")}>
+                  {data.prediction?.expected_surprise_pct > 0 ? "+" : ""}{(data.prediction?.expected_surprise_pct).toFixed(1)}%
                 </div>
                 <div className="mt-1 text-xs text-muted-foreground">Expected Surprise</div>
               </div>
             </Card>
             <Card>
               <div className="text-center">
-                <div className="text-3xl font-bold tabular-nums">{(data.historical_beat_rate * 100).toFixed(0)}%</div>
+                <div className="text-3xl font-bold tabular-nums">{(data.prediction?.historical_beat_rate).toFixed(0)}%</div>
                 <div className="mt-1 text-xs text-muted-foreground">Historical Beat Rate</div>
               </div>
             </Card>
@@ -87,12 +87,12 @@ export default function EarningsPredictPage() {
           <div className="grid gap-4 md:grid-cols-2">
             <Card title="Recommendation" icon={<Target size={14} />}>
               <div className="flex items-center gap-3">
-                <Badge variant={data.recommendation?.includes("Buy") ? "success" : data.recommendation?.includes("Sell") ? "danger" : "default"} className="text-base px-4 py-2">
-                  {data.recommendation ?? "Hold"}
+                <Badge variant={data.prediction?.recommendation?.includes("Buy") ? "success" : data.prediction?.recommendation?.includes("Sell") ? "danger" : "default"} className="text-base px-4 py-2">
+                  {data.prediction?.recommendation ?? "Hold"}
                 </Badge>
-                {data.implied_move != null && (
+                {data.prediction?.implied_move != null && (
                   <span className="text-sm text-muted-foreground">
-                    Implied move: <span className="font-semibold">{data.implied_move > 0 ? "+" : ""}{(data.implied_move * 100).toFixed(1)}%</span>
+                    Implied move: <span className="font-semibold">{data.prediction?.implied_move > 0 ? "+" : ""}{(data.prediction?.implied_move).toFixed(1)}%</span>
                   </span>
                 )}
               </div>
@@ -100,18 +100,18 @@ export default function EarningsPredictPage() {
             <Card title="Confidence" icon={<BarChart3 size={14} />}>
               <div className="flex items-center gap-3">
                 <div className="h-3 flex-1 overflow-hidden rounded-full bg-muted/50">
-                  <div className="h-full rounded-full bg-primary" style={{ width: `${(data.confidence ?? 0.5) * 100}%` }} />
+                  <div className="h-full rounded-full bg-primary" style={{ width: `${(data.prediction?.confidence ?? 50)}%` }} />
                 </div>
-                <span className="text-sm font-semibold tabular-nums">{((data.confidence ?? 0.5) * 100).toFixed(0)}%</span>
+                <span className="text-sm font-semibold tabular-nums">{((data.prediction?.confidence ?? 50)).toFixed(0)}%</span>
               </div>
             </Card>
           </div>
 
           {/* Contributing Factors */}
-          {data.factors?.length > 0 && (
+          {data.prediction?.factors?.length > 0 && (
             <Card title="Contributing Factors" icon={<Zap size={14} />}>
               <div className="space-y-2">
-                {data.factors.map((f: any, i: number) => (
+                {data.prediction?.factors.map((f: any, i: number) => (
                   <div key={i} className="flex items-center justify-between rounded-xl border border-border/30 p-3">
                     <span className="text-sm">{f.name}</span>
                     <div className="flex items-center gap-2">
