@@ -130,4 +130,7 @@ export const api = {
   signalStrength: (symbol: string) => fetchJson<any>(`${BASE}/quant/signal/${symbol}`),
   riskParitySizing: (symbol: string, portfolio: number = 10000, risk: number = 2) =>
     fetchJson<any>(`${BASE}/quant/sizing/${symbol}?portfolio=${portfolio}&risk=${risk}`),
+
+  // --- final verdict (ensemble) ---
+  finalVerdict: (symbol: string) => fetchJson<any>(`${BASE}/verdict/${symbol}`),
 };
