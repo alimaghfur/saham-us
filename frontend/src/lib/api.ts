@@ -133,4 +133,8 @@ export const api = {
 
   // --- final verdict (ensemble) ---
   finalVerdict: (symbol: string) => fetchJson<any>(`${BASE}/verdict/${symbol}`),
+
+  // --- prediction ---
+  prediction: (symbol: string, range = "1y") =>
+    fetchJson<any>(`${BASE}/prediction/${symbol}?range=${range}`),
 };

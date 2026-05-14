@@ -27,6 +27,7 @@ import {
   TrendingUp,
   Trophy,
   Zap,
+  Waypoints,
   type LucideIcon,
 } from "lucide-react";
 
@@ -58,6 +59,7 @@ export const menuSections: MenuSection[] = [
     label: "Analisa",
     items: [
       { name: "Stock Score", href: "/score", icon: Target, badge: "New", description: "Skor saham 1-100" },
+      { name: "Prediksi Saham", href: "/prediction", icon: Waypoints, badge: "New", description: "Prediksi harga 1d/1w/1m" },
       { name: "Rekomendasi", href: "/recommendations", icon: Star, badge: "New", description: "Top picks hari ini" },
       { name: "Buy the Dip", href: "/opportunities", icon: TrendingDown, description: "Saham bagus lagi diskon" },
       { name: "Perbandingan", href: "/compare", icon: BarChart3, description: "Compare saham side-by-side" },
