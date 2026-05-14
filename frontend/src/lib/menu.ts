@@ -4,6 +4,7 @@ import {
   Bell,
   BookOpen,
   Calculator,
+  Calendar,
   Clock,
   Eye,
   Filter,
@@ -60,6 +61,7 @@ export const menuSections: MenuSection[] = [
       { name: "Screener", href: "/screener", icon: Filter, description: "Filter saham multi-kriteria" },
       { name: "AI Insights", href: "/ai", icon: Sparkles, badge: "AI", description: "Natural language screener" },
       { name: "News", href: "/news", icon: Newspaper, description: "Berita & riset" },
+      { name: "Earnings", href: "/earnings", icon: Calendar, badge: "New", description: "Jadwal laporan keuangan" },
     ],
   },
   {
