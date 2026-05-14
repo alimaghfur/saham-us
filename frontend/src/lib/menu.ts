@@ -28,6 +28,11 @@ import {
   Trophy,
   Zap,
   Waypoints,
+  Brain,
+  MessageCircle,
+  Layers,
+  GitBranch,
+  Dice,
   type LucideIcon,
 } from "lucide-react";
 
@@ -60,6 +65,8 @@ export const menuSections: MenuSection[] = [
     items: [
       { name: "Stock Score", href: "/score", icon: Target, badge: "New", description: "Skor saham 1-100" },
       { name: "Prediksi Saham", href: "/prediction", icon: Waypoints, badge: "New", description: "Prediksi harga 1d/1w/1m" },
+      { name: "ML Prediction", href: "/ml-prediction", icon: Brain, badge: "AI", description: "Prediksi Machine Learning" },
+      { name: "Sentimen Berita", href: "/sentiment", icon: MessageCircle, badge: "New", description: "NLP sentimen dari berita" },
       { name: "Rekomendasi", href: "/recommendations", icon: Star, badge: "New", description: "Top picks hari ini" },
       { name: "Buy the Dip", href: "/opportunities", icon: TrendingDown, description: "Saham bagus lagi diskon" },
       { name: "Perbandingan", href: "/compare", icon: BarChart3, description: "Compare saham side-by-side" },
@@ -75,6 +82,9 @@ export const menuSections: MenuSection[] = [
       { name: "Swing Trading", href: "/swing", icon: TrendingUp, description: "Breakout & pullback setups" },
       { name: "Scalping", href: "/scalping", icon: Zap, description: "Momentum & hot stocks" },
       { name: "Backtesting", href: "/backtest", icon: TestTube, description: "Simulasi strategi" },
+      { name: "Options Chain", href: "/options", icon: Layers, badge: "New", description: "Options & Greeks" },
+      { name: "Fibonacci", href: "/fibonacci", icon: GitBranch, badge: "New", description: "Auto Fib retracement" },
+      { name: "Monte Carlo", href: "/monte-carlo", icon: Dice, badge: "New", description: "Simulasi probabilistik" },
       { name: "Position Calculator", href: "/calculator", icon: Calculator, description: "Hitung lot aman" },
       { name: "DCA Planner", href: "/calculator/dca", icon: Repeat, badge: "New", description: "Investasi berkala" },
     ],

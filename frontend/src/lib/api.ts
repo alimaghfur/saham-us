@@ -137,4 +137,29 @@ export const api = {
   // --- prediction ---
   prediction: (symbol: string, range = "1y") =>
     fetchJson<any>(`${BASE}/prediction/${symbol}?range=${range}`),
+
+  // --- sentiment ---
+  sentiment: (symbol: string, limit = 20) =>
+    fetchJson<any>(`${BASE}/sentiment/${symbol}?limit=${limit}`),
+
+  // --- ml prediction ---
+  mlPrediction: (symbol: string) =>
+    fetchJson<any>(`${BASE}/ml-prediction/${symbol}`),
+
+  // --- options ---
+  optionsChain: (symbol: string, expiryDays = 30) =>
+    fetchJson<any>(`${BASE}/options/${symbol}?expiry_days=${expiryDays}`),
+
+  // --- quantitative ---
+  correlation: (symbols: string[]) =>
+    fetchJson<any>(`${BASE}/quantitative/correlation?symbols=${symbols.join(",")}`),
+  monteCarlo: (symbol: string, simulations = 1000, days = 30) =>
+    fetchJson<any>(`${BASE}/quantitative/monte-carlo/${symbol}?simulations=${simulations}&days=${days}`),
+  fibonacci: (symbol: string) =>
+    fetchJson<any>(`${BASE}/quantitative/fibonacci/${symbol}`),
+
+  // --- telegram ---
+  telegramSetup: () => fetchJson<any>(`${BASE}/telegram/setup`),
+  checkAlert: (data: any) =>
+    fetchJson<any>(`${BASE}/telegram/check-alert`, { method: "POST", body: JSON.stringify(data) }),
 };
