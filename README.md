@@ -6,7 +6,7 @@
 ![Next.js](https://img.shields.io/badge/Next.js-14.2-black)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688)
 ![Tailwind](https://img.shields.io/badge/Tailwind_CSS-3.4-38bdf8)
-![Modules](https://img.shields.io/badge/modules-28-purple)
+![Modules](https://img.shields.io/badge/modules-29-purple)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
 **Platform analisa saham US profesional** untuk membantu investor Indonesia membuat keputusan investasi yang lebih baik dan profit di pasar saham US.
@@ -49,6 +49,7 @@
 | **Perbandingan Saham** | Compare hingga 5 saham side-by-side (10 metrik, highlight best/worst) |
 | **Stock Screener** | Filter multi-kriteria (PE, ROE, Growth, Dividend, Sector) + 5 presets |
 | **AI Insights** | Natural language screener — ketik pertanyaan bahasa Inggris → filter otomatis |
+| **Earnings Calendar** | Jadwal laporan keuangan saham populer, EPS estimates, tips earnings season |
 | **News & Research** | Berita agregasi per sektor + ticker, thumbnail cards, quick-access buttons |
 | **Stock Detail** | Chart candlestick, technicals (SMA/EMA/RSI/MACD/BB/ATR), fundamentals, profile, news |
 
@@ -196,6 +197,8 @@ docker-compose up --build
 - [x] Phase 5 — Stock Score, Recommendations, AI Insights, Education
 - [x] Phase 6 — Buy the Dip, Peer Comparison, Trading Journal, Position Calculator
 - [x] Phase 7 — DCA Planner, Market Hours (WIB), ETF info
+- [x] Phase 8 — Earnings Calendar, Mobile Bottom Navigation
+- [ ] Phase 9 — Social Sentiment, Export PDF, Real-time WebSocket
 - [ ] Phase 8 — Earnings Calendar, Social Sentiment, Mobile Optimization, Export PDF
 
 ---
@@ -216,6 +219,6 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 **Built with ❤️ for Indonesian investors exploring US markets**
 
-*28 modules · Real-time data · AI-powered · Beginner-friendly*
+*29 modules · Real-time data · AI-powered · Mobile-ready · Beginner-friendly*
 
 </div>
