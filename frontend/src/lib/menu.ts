@@ -4,6 +4,7 @@ import {
   Bell,
   BookOpen,
   Calculator,
+  Clock,
   Eye,
   Filter,
   Gauge,
@@ -13,6 +14,7 @@ import {
   LineChart,
   Newspaper,
   PieChart,
+  Repeat,
   Settings,
   Sparkles,
   Star,
@@ -44,6 +46,7 @@ export const menuSections: MenuSection[] = [
     items: [
       { name: "Dashboard", href: "/", icon: Home, description: "Market snapshot & overview" },
       { name: "Markets & Sectors", href: "/markets", icon: Globe, description: "Sector rotation & breadth" },
+      { name: "Market Hours", href: "/markets/hours", icon: Clock, badge: "New", description: "Jam trading US vs WIB" },
       { name: "Macro Economy", href: "/macro", icon: Gauge, description: "VIX, Treasury, Fear & Greed" },
     ],
   },
@@ -65,7 +68,8 @@ export const menuSections: MenuSection[] = [
       { name: "Swing Trading", href: "/swing", icon: TrendingUp, description: "Breakout & pullback setups" },
       { name: "Scalping", href: "/scalping", icon: Zap, description: "Momentum & hot stocks" },
       { name: "Backtesting", href: "/backtest", icon: TestTube, description: "Simulasi strategi" },
-      { name: "Position Calculator", href: "/calculator", icon: Calculator, badge: "New", description: "Hitung lot aman" },
+      { name: "Position Calculator", href: "/calculator", icon: Calculator, description: "Hitung lot aman" },
+      { name: "DCA Planner", href: "/calculator/dca", icon: Repeat, badge: "New", description: "Investasi berkala" },
     ],
   },
   {

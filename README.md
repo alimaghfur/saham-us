@@ -6,7 +6,7 @@
 ![Next.js](https://img.shields.io/badge/Next.js-14.2-black)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688)
 ![Tailwind](https://img.shields.io/badge/Tailwind_CSS-3.4-38bdf8)
-![Modules](https://img.shields.io/badge/modules-25-purple)
+![Modules](https://img.shields.io/badge/modules-28-purple)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
 **Platform analisa saham US profesional** untuk membantu investor Indonesia membuat keputusan investasi yang lebih baik dan profit di pasar saham US.
@@ -23,7 +23,7 @@
 - 🤖 **AI Natural Language Screener** — Ketik "show me tech stocks with PE under 20" → hasil otomatis
 - ⭐ **Daily Recommendations** — Top picks berdasarkan gaya (Konservatif / Balanced / Agresif)
 - 📉 **Buy the Dip Detector** — Alert saham bagus yang lagi diskon (turun >3%)
-- 📊 **25 Modul Lengkap** — Dari Dashboard sampai Trading Journal
+- 📊 **28 Modul Lengkap** — Dari Dashboard sampai Trading Journal & DCA Planner
 - 🎨 **Modern Dark UI** — Premium trading terminal dengan glassmorphism & smooth animations
 - 📚 **Panduan Bahasa Indonesia** — Glossary, strategi, checklist untuk pemula
 - 🏆 **Paper Trading** — Latihan dengan $100K virtual tanpa risiko
@@ -37,6 +37,7 @@
 |--------|-------------|
 | **Dashboard** | Market snapshot — indices, top movers, sector heatmap, quick actions |
 | **Markets & Sectors** | Sector rotation, market breadth, expanded indices view |
+| **Market Hours** | Jam trading US vs WIB (live clock), session indicator, tips investor Indonesia |
 | **Macro Economy** | VIX, DXY, Gold, Oil, Treasury yields, Fear & Greed Index, yield curve |
 
 ### 🔍 Analisa & Research
@@ -58,6 +59,7 @@
 | **Scalping** | Hot stocks scanner, momentum bars, volume spikes, auto-refresh 30s |
 | **Backtesting** | Simulasi 4 strategi (SMA Cross, RSI, MACD, Breakout) dengan equity curve & trade log |
 | **Position Calculator** | Hitung jumlah saham aman berdasarkan budget, risk %, SL level — jangan overlot! |
+| **DCA Planner** | Dollar Cost Averaging — rencana investasi berkala bulanan dengan proyeksi profit |
 
 ### 💼 Portfolio Management
 | Module | Description |
@@ -193,7 +195,8 @@ docker-compose up --build
 - [x] Phase 4 — Portfolio, News, Backtesting, Macro Economy
 - [x] Phase 5 — Stock Score, Recommendations, AI Insights, Education
 - [x] Phase 6 — Buy the Dip, Peer Comparison, Trading Journal, Position Calculator
-- [ ] Phase 7 — Earnings Calendar, Mobile Optimization, Export PDF, Real-time WebSocket
+- [x] Phase 7 — DCA Planner, Market Hours (WIB), ETF info
+- [ ] Phase 8 — Earnings Calendar, Social Sentiment, Mobile Optimization, Export PDF
 
 ---
 
@@ -213,6 +216,6 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 **Built with ❤️ for Indonesian investors exploring US markets**
 
-*25 modules · Real-time data · AI-powered · Beginner-friendly*
+*28 modules · Real-time data · AI-powered · Beginner-friendly*
 
 </div>
