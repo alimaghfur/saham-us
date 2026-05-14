@@ -5,6 +5,7 @@ import {
   BookOpen,
   Calculator,
   Calendar,
+  CalendarDays,
   Clock,
   Eye,
   Filter,
@@ -17,6 +18,7 @@ import {
   PieChart,
   Repeat,
   Settings,
+  ShieldAlert,
   Sparkles,
   Star,
   Target,
@@ -49,6 +51,7 @@ export const menuSections: MenuSection[] = [
       { name: "Markets & Sectors", href: "/markets", icon: Globe, description: "Sector rotation & breadth" },
       { name: "Market Hours", href: "/markets/hours", icon: Clock, badge: "New", description: "Jam trading US vs WIB" },
       { name: "Macro Economy", href: "/macro", icon: Gauge, description: "VIX, Treasury, Fear & Greed" },
+      { name: "Weekly Recap", href: "/recap", icon: CalendarDays, badge: "New", description: "Ringkasan pasar mingguan" },
     ],
   },
   {
@@ -82,6 +85,8 @@ export const menuSections: MenuSection[] = [
       { name: "Portfolio", href: "/portfolio", icon: PieChart, description: "Holdings & P&L" },
       { name: "Trading Journal", href: "/journal", icon: BookOpen, badge: "New", description: "Catat & review trade" },
       { name: "Alerts", href: "/alerts", icon: Bell, description: "Notifikasi harga" },
+      { name: "Risk Dashboard", href: "/risk", icon: ShieldAlert, description: "Cek diversifikasi" },
+      { name: "Goal Tracker", href: "/goals", icon: Target, badge: "New", description: "Target investasi" },
     ],
   },
   {

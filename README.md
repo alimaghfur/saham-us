@@ -6,7 +6,7 @@
 ![Next.js](https://img.shields.io/badge/Next.js-14.2-black)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688)
 ![Tailwind](https://img.shields.io/badge/Tailwind_CSS-3.4-38bdf8)
-![Modules](https://img.shields.io/badge/modules-29-purple)
+![Modules](https://img.shields.io/badge/modules-32-purple)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
 **Platform analisa saham US profesional** untuk membantu investor Indonesia membuat keputusan investasi yang lebih baik dan profit di pasar saham US.
@@ -23,14 +23,14 @@
 - 🤖 **AI Natural Language Screener** — Ketik "show me tech stocks with PE under 20" → hasil otomatis
 - ⭐ **Daily Recommendations** — Top picks berdasarkan gaya (Konservatif / Balanced / Agresif)
 - 📉 **Buy the Dip Detector** — Alert saham bagus yang lagi diskon (turun >3%)
-- 📊 **28 Modul Lengkap** — Dari Dashboard sampai Trading Journal & DCA Planner
+- 📊 **32 Modul Lengkap** — Dari Dashboard sampai Goal Tracker & Risk Dashboard
 - 🎨 **Modern Dark UI** — Premium trading terminal dengan glassmorphism & smooth animations
 - 📚 **Panduan Bahasa Indonesia** — Glossary, strategi, checklist untuk pemula
 - 🏆 **Paper Trading** — Latihan dengan $100K virtual tanpa risiko
 
 ---
 
-## 🚀 Features (25 Modules)
+## 🚀 Features (32 Modules)
 
 ### 📊 Overview & Market
 | Module | Description |
@@ -39,6 +39,7 @@
 | **Markets & Sectors** | Sector rotation, market breadth, expanded indices view |
 | **Market Hours** | Jam trading US vs WIB (live clock), session indicator, tips investor Indonesia |
 | **Macro Economy** | VIX, DXY, Gold, Oil, Treasury yields, Fear & Greed Index, yield curve |
+| **Weekly Recap** | Auto-generated ringkasan mingguan — indices, sektor, top movers, key takeaways |
 
 ### 🔍 Analisa & Research
 | Module | Description |
@@ -70,6 +71,8 @@
 | **Portfolio Tracker** | Holdings, P&L per saham, allocation chart, transaction history |
 | **Trading Journal** | Catat alasan setiap trade, emosi, strategi, rating ★, close as Win/Loss |
 | **Alerts** | 6 kondisi alert (price, RSI, change%), auto-check 30 detik, localStorage persist |
+| **Risk Dashboard** | Analisa diversifikasi sektor, skor 1-100, warning konsentrasi, saran rebalancing |
+| **Goal Tracker** | Set target investasi, hitung savings bulanan, progress bar, preset goals |
 
 ### 📚 Edukasi
 | Module | Description |
@@ -101,7 +104,7 @@
 ┌─────────────────────────────┐         ┌──────────────────────────────┐
 │     Frontend (Next.js 14)    │  HTTP   │      Backend (FastAPI)        │
 │                              │ ───────▶│                              │
-│  • App Router (25 pages)     │         │  • yfinance data adapter     │
+│  • App Router (32 pages)     │         │  • yfinance data adapter     │
 │  • Tailwind CSS + Glassmorp  │         │  • Technical indicators      │
 │  • React Query (caching)     │         │  • Screener engine           │
 │  • Lightweight Charts        │         │  • Swing/Scalp scanners      │
@@ -198,8 +201,8 @@ docker-compose up --build
 - [x] Phase 6 — Buy the Dip, Peer Comparison, Trading Journal, Position Calculator
 - [x] Phase 7 — DCA Planner, Market Hours (WIB), ETF info
 - [x] Phase 8 — Earnings Calendar, Mobile Bottom Navigation
-- [ ] Phase 9 — Social Sentiment, Export PDF, Real-time WebSocket
-- [ ] Phase 8 — Earnings Calendar, Social Sentiment, Mobile Optimization, Export PDF
+- [x] Phase 9 — Weekly Recap, Risk Dashboard, Goal Tracker
+- [ ] Phase 10 — Social Sentiment, Export PDF, Real-time WebSocket
 
 ---
 
@@ -219,6 +222,6 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 **Built with ❤️ for Indonesian investors exploring US markets**
 
-*29 modules · Real-time data · AI-powered · Mobile-ready · Beginner-friendly*
+*32 modules · Real-time data · AI-powered · Mobile-ready · Beginner-friendly*
 
 </div>
