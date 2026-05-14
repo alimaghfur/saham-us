@@ -67,14 +67,14 @@ export default function PatternsPage() {
             </Card>
             <Card>
               <div className="text-center">
-                <div className="text-lg font-semibold">{data.dominant_pattern ?? "—"}</div>
+                <div className="text-lg font-semibold">{data.dominant_pattern?.pattern_name ?? "—"}</div>
                 <div className="mt-1 text-xs text-muted-foreground">Dominant Pattern</div>
-                {data.dominant_confidence != null && (
+                {data.dominant_pattern?.confidence != null && (
                   <div className="mt-2 flex items-center justify-center gap-2">
                     <div className="h-2 w-20 overflow-hidden rounded-full bg-muted/50">
-                      <div className="h-full rounded-full bg-primary" style={{ width: `${data.dominant_confidence * 100}%` }} />
+                      <div className="h-full rounded-full bg-primary" style={{ width: `${data.dominant_pattern.confidence}%` }} />
                     </div>
-                    <span className="text-xs tabular-nums">{(data.dominant_confidence * 100).toFixed(0)}%</span>
+                    <span className="text-xs tabular-nums">{data.dominant_pattern.confidence.toFixed(0)}%</span>
                   </div>
                 )}
               </div>
@@ -89,20 +89,20 @@ export default function PatternsPage() {
                   <div key={i} className="rounded-2xl border border-border/30 p-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <span className="font-semibold text-sm">{p.name}</span>
-                        <Badge variant={p.direction === "Bullish" ? "success" : p.direction === "Bearish" ? "danger" : "default"}>
+                        <span className="font-semibold text-sm">{p.pattern_name}</span>
+                        <Badge variant={p.direction === "bullish" ? "success" : p.direction === "bearish" ? "danger" : "default"}>
                           {p.direction}
                         </Badge>
                       </div>
-                      <span className="text-xs text-muted-foreground tabular-nums">{(p.confidence * 100).toFixed(0)}% confidence</span>
+                      <span className="text-xs text-muted-foreground tabular-nums">{p.confidence?.toFixed(0)}% confidence</span>
                     </div>
                     <div className="mt-2 h-2 overflow-hidden rounded-full bg-muted/50">
-                      <div className={cn("h-full rounded-full", p.direction === "Bullish" ? "bg-bull" : "bg-bear")} style={{ width: `${p.confidence * 100}%` }} />
+                      <div className={cn("h-full rounded-full", p.direction === "bullish" ? "bg-bull" : "bg-bear")} style={{ width: `${p.confidence}%` }} />
                     </div>
                     <div className="mt-3 grid grid-cols-4 gap-4 text-xs">
-                      <div><span className="text-muted-foreground">Entry</span><div className="font-semibold tabular-nums">${formatPrice(p.entry)}</div></div>
-                      <div><span className="text-muted-foreground">Target</span><div className="font-semibold text-bull tabular-nums">${formatPrice(p.target)}</div></div>
-                      <div><span className="text-muted-foreground">Stop</span><div className="font-semibold text-bear tabular-nums">${formatPrice(p.stop)}</div></div>
+                      <div><span className="text-muted-foreground">Entry</span><div className="font-semibold tabular-nums">${formatPrice(p.entry_price)}</div></div>
+                      <div><span className="text-muted-foreground">Target</span><div className="font-semibold text-bull tabular-nums">${formatPrice(p.target_price)}</div></div>
+                      <div><span className="text-muted-foreground">Stop</span><div className="font-semibold text-bear tabular-nums">${formatPrice(p.stop_loss)}</div></div>
                       <div><span className="text-muted-foreground">R:R</span><div className="font-semibold tabular-nums">{p.risk_reward?.toFixed(1) ?? "—"}</div></div>
                     </div>
                   </div>
