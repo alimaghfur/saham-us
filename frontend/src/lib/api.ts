@@ -123,4 +123,11 @@ export const api = {
   supportResistance: (symbol: string) => fetchJson<any>(`${BASE}/advanced/support-resistance/${symbol}`),
   sectorRotation: () => fetchJson<any>(`${BASE}/advanced/sector-rotation`),
   compositeSignal: (symbol: string) => fetchJson<any>(`${BASE}/advanced/composite/${symbol}`),
+
+  // --- quant engine ---
+  alphaScore: (symbol: string) => fetchJson<any>(`${BASE}/quant/alpha/${symbol}`),
+  marketRegime: () => fetchJson<any>(`${BASE}/quant/regime`),
+  signalStrength: (symbol: string) => fetchJson<any>(`${BASE}/quant/signal/${symbol}`),
+  riskParitySizing: (symbol: string, portfolio: number = 10000, risk: number = 2) =>
+    fetchJson<any>(`${BASE}/quant/sizing/${symbol}?portfolio=${portfolio}&risk=${risk}`),
 };
