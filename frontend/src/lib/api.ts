@@ -116,4 +116,11 @@ export const api = {
     fetchJson<any[]>(`${BASE}/opportunities/dips?min_drop=${minDrop}&min_score=${minScore}`),
   comparePeers: (symbols: string[]) =>
     fetchJson<any[]>(`${BASE}/opportunities/compare?symbols=${symbols.join(",")}`),
+
+  // --- advanced analytics ---
+  multiTimeframe: (symbol: string) => fetchJson<any>(`${BASE}/advanced/multi-timeframe/${symbol}`),
+  smartMoney: (symbol: string) => fetchJson<any>(`${BASE}/advanced/smart-money/${symbol}`),
+  supportResistance: (symbol: string) => fetchJson<any>(`${BASE}/advanced/support-resistance/${symbol}`),
+  sectorRotation: () => fetchJson<any>(`${BASE}/advanced/sector-rotation`),
+  compositeSignal: (symbol: string) => fetchJson<any>(`${BASE}/advanced/composite/${symbol}`),
 };
