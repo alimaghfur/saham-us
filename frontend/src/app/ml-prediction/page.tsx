@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Brain, Search, TrendingUp, ArrowUpRight, ArrowDownRight, Minus } from "lucide-react";
+import { Sparkles, Search, TrendingUp, ArrowUpRight, ArrowDownRight, Minus } from "lucide-react";
 import { Card } from "@/components/Card";
 import { PageHeader } from "@/components/PageHeader";
 import { Badge } from "@/components/Badge";
@@ -79,7 +79,7 @@ export default function MLPredictionPage() {
             ))}
           </div>
 
-          <Card title="Feature Importance" icon={<Brain size={14} />}>
+          <Card title="Feature Importance" icon={<Sparkles size={14} />}>
             <div className="space-y-3">
               {ml.data.features_importance?.map((f: any) => (
                 <div key={f.feature} className="flex items-center gap-3">
@@ -98,7 +98,7 @@ export default function MLPredictionPage() {
       {!searchSymbol && !ml.isLoading && (
         <Card>
           <div className="flex flex-col items-center justify-center py-12 text-center">
-            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10"><Brain size={28} className="text-primary" /></div>
+            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10"><Sparkles size={28} className="text-primary" /></div>
             <h3 className="text-lg font-semibold">Machine Learning Prediction</h3>
             <p className="mt-2 max-w-md text-sm text-muted-foreground">Gunakan ensemble 4 model ML untuk memprediksi pergerakan harga saham.</p>
             <div className="mt-4 flex flex-wrap justify-center gap-2">

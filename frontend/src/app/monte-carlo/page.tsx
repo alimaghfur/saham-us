@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Dice, Search, TrendingUp } from "lucide-react";
+import { Activity, Search, TrendingUp } from "lucide-react";
 import { Card } from "@/components/Card";
 import { PageHeader } from "@/components/PageHeader";
 import { Badge } from "@/components/Badge";
@@ -108,7 +108,7 @@ export default function MonteCarloPage() {
       {!searchSymbol && !mc.isLoading && (
         <Card>
           <div className="flex flex-col items-center justify-center py-12 text-center">
-            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10"><Dice size={28} className="text-primary" /></div>
+            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10"><Activity size={28} className="text-primary" /></div>
             <h3 className="text-lg font-semibold">Monte Carlo Simulation</h3>
             <p className="mt-2 max-w-md text-sm text-muted-foreground">Simulasi ribuan skenario untuk melihat probabilitas profit & risiko.</p>
           </div>

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { GitBranch, Search } from "lucide-react";
+import { Activity, Search } from "lucide-react";
 import { Card } from "@/components/Card";
 import { PageHeader } from "@/components/PageHeader";
 import { Badge } from "@/components/Badge";
@@ -54,7 +54,7 @@ export default function FibonacciPage() {
           </div>
 
           {/* Fibonacci Levels */}
-          <Card title="Fibonacci Levels" icon={<GitBranch size={14} />}>
+          <Card title="Fibonacci Levels" icon={<Activity size={14} />}>
             <div className="space-y-2">
               {fib.data.levels?.map((lv: any, i: number) => {
                 const pctFromPrice = ((lv.price - fib.data.current_price) / fib.data.current_price * 100);
@@ -111,7 +111,7 @@ export default function FibonacciPage() {
       {!searchSymbol && !fib.isLoading && (
         <Card>
           <div className="flex flex-col items-center justify-center py-12 text-center">
-            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10"><GitBranch size={28} className="text-primary" /></div>
+            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10"><Activity size={28} className="text-primary" /></div>
             <h3 className="text-lg font-semibold">Fibonacci Retracement</h3>
             <p className="mt-2 max-w-md text-sm text-muted-foreground">Auto-detect swing points dan level fibonacci (23.6%, 38.2%, 50%, 61.8%, 78.6%).</p>
             <div className="mt-4 flex flex-wrap justify-center gap-2">

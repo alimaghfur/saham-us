@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Layers, Search } from "lucide-react";
+import { BarChart3, Search } from "lucide-react";
 import { Card } from "@/components/Card";
 import { PageHeader } from "@/components/PageHeader";
 import { Badge } from "@/components/Badge";
@@ -64,7 +64,7 @@ export default function OptionsPage() {
           </div>
 
           {/* Calls Table */}
-          <Card title="CALLS" icon={<Layers size={14}/>}>
+          <Card title="CALLS" icon={<BarChart3 size={14}/>}>
             <div className="overflow-x-auto">
               <table className="w-full text-xs">
                 <thead><tr className="border-b border-border/30 text-muted-foreground">
@@ -90,7 +90,7 @@ export default function OptionsPage() {
           </Card>
 
           {/* Puts Table */}
-          <Card title="PUTS" icon={<Layers size={14}/>}>
+          <Card title="PUTS" icon={<BarChart3 size={14}/>}>
             <div className="overflow-x-auto">
               <table className="w-full text-xs">
                 <thead><tr className="border-b border-border/30 text-muted-foreground">
@@ -120,7 +120,7 @@ export default function OptionsPage() {
       {!searchSymbol && !options.isLoading && (
         <Card>
           <div className="flex flex-col items-center justify-center py-12 text-center">
-            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10"><Layers size={28} className="text-primary" /></div>
+            <div className="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10"><BarChart3 size={28} className="text-primary" /></div>
             <h3 className="text-lg font-semibold">Options Chain</h3>
             <p className="mt-2 max-w-md text-sm text-muted-foreground">Lihat data opsi lengkap dengan Greeks, IV Smile, dan Max Pain.</p>
           </div>
