@@ -6,7 +6,7 @@
 ![Next.js](https://img.shields.io/badge/Next.js-14.2-black)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688)
 ![Tailwind](https://img.shields.io/badge/Tailwind_CSS-3.4-38bdf8)
-![Modules](https://img.shields.io/badge/modules-33-purple)
+![Modules](https://img.shields.io/badge/modules-39-purple)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
 **Platform analisa saham US profesional** untuk membantu investor Indonesia membuat keputusan investasi yang lebih baik dan profit di pasar saham US.
@@ -20,13 +20,15 @@
 ## ✨ Highlights
 
 - 🔮 **Prediksi Saham** — Prediksi harga 1 hari, 1 minggu, 1 bulan + entry point & risk management
+- 🧠 **ML Prediction** — Ensemble 4 model Machine Learning (Momentum, Mean Reversion, Trend, Volatility)
+- 📰 **Sentimen Berita** — NLP analisis sentimen dari berita real-time (bullish/bearish scoring)
+- 📊 **Options Chain & Greeks** — Black-Scholes pricing + Delta, Gamma, Theta, Vega, IV Smile, Max Pain
+- 🎲 **Monte Carlo Simulation** — 1000 skenario probabilistik + VaR, P(profit), distribusi harga
+- 📐 **Fibonacci Auto-Detection** — Auto swing high/low + level retracement (23.6% - 78.6%)
+- 📱 **Telegram Alerts** — Notifikasi otomatis ke Telegram (harga, RSI, % change)
 - 🎯 **Stock Score 1-100** — Skor komprehensif per saham (Valuation + Quality + Growth + Momentum)
 - 🤖 **AI Natural Language Screener** — Ketik "show me tech stocks with PE under 20" → hasil otomatis
-- ⭐ **Daily Recommendations** — Top picks berdasarkan gaya (Konservatif / Balanced / Agresif)
-- 📉 **Buy the Dip Detector** — Alert saham bagus yang lagi diskon (turun >3%)
-- 📊 **32 Modul Lengkap** — Dari Dashboard sampai Goal Tracker & Risk Dashboard
 - 🎨 **Modern Dark UI** — Premium trading terminal dengan glassmorphism & smooth animations
-- 📚 **Panduan Bahasa Indonesia** — Glossary, strategi, checklist untuk pemula
 - 🏆 **Paper Trading** — Latihan dengan $100K virtual tanpa risiko
 
 ---
@@ -50,6 +52,8 @@
 | **Buy the Dip** | Detector saham bagus (skor >50) yang turun >3% hari ini — peluang beli saat diskon |
 | **Perbandingan Saham** | Compare hingga 5 saham side-by-side (10 metrik, highlight best/worst) |
 | **Prediksi Saham** | Prediksi harga 1 hari / 1 minggu / 1 bulan + entry point, stop loss, target, dan confidence level |
+| **ML Prediction** | Ensemble 4 model ML (Momentum LR, Mean Reversion, Trend Following, Volatility-adjusted) |
+| **Sentimen Berita** | NLP sentiment analysis dari news headlines — scoring bullish/bearish per berita |
 | **Stock Screener** | Filter multi-kriteria (PE, ROE, Growth, Dividend, Sector) + 5 presets |
 | **AI Insights** | Natural language screener — ketik pertanyaan bahasa Inggris → filter otomatis |
 | **Earnings Calendar** | Jadwal laporan keuangan saham populer, EPS estimates, tips earnings season |
@@ -62,6 +66,9 @@
 | **Swing Trading** | Scanner 4 setup: Breakout, Pullback SMA20, Oversold Bounce, Golden Cross |
 | **Scalping** | Hot stocks scanner, momentum bars, volume spikes, auto-refresh 30s |
 | **Backtesting** | Simulasi 4 strategi (SMA Cross, RSI, MACD, Breakout) dengan equity curve & trade log |
+| **Options Chain** | Black-Scholes pricing + Greeks (Delta, Gamma, Theta, Vega, Rho) + IV Smile + Max Pain |
+| **Fibonacci** | Auto swing detection + Fibonacci retracement levels (23.6%, 38.2%, 50%, 61.8%, 78.6%) |
+| **Monte Carlo** | 1000 simulasi GBM — probabilitas profit, VaR 95%, expected return, path distribution |
 | **Position Calculator** | Hitung jumlah saham aman berdasarkan budget, risk %, SL level — jangan overlot! |
 | **DCA Planner** | Dollar Cost Averaging — rencana investasi berkala bulanan dengan proyeksi profit |
 
@@ -73,6 +80,7 @@
 | **Portfolio Tracker** | Holdings, P&L per saham, allocation chart, transaction history |
 | **Trading Journal** | Catat alasan setiap trade, emosi, strategi, rating ★, close as Win/Loss |
 | **Alerts** | 6 kondisi alert (price, RSI, change%), auto-check 30 detik, localStorage persist |
+| **Telegram Alerts** | Bot Telegram integration — notifikasi harga, RSI, % change ke HP otomatis |
 | **Risk Dashboard** | Analisa diversifikasi sektor, skor 1-100, warning konsentrasi, saran rebalancing |
 | **Goal Tracker** | Set target investasi, hitung savings bulanan, progress bar, preset goals |
 
@@ -129,6 +137,11 @@
 | `/market` | indices, movers, sectors | Market overview |
 | `/technicals` | /{symbol} | SMA, EMA, RSI, MACD, BB, ATR, VWAP |
 | `/prediction` | /{symbol} | Prediksi harga 1d/1w/1m + entry point & key levels |
+| `/ml-prediction` | /{symbol} | ML ensemble prediction (4 models) |
+| `/sentiment` | /{symbol} | NLP sentiment analysis dari berita |
+| `/options` | /{symbol} | Options chain + Greeks + IV + Max Pain |
+| `/quantitative` | correlation, monte-carlo/{symbol}, fibonacci/{symbol} | Korelasi, simulasi, Fib |
+| `/telegram` | setup, check-alert, format-message | Telegram bot alerts |
 | `/screener` | run (POST), presets | Multi-criteria screening |
 | `/swing` | scan, setups | Swing trade scanner |
 | `/scalping` | hot | Hot stocks scanner |
@@ -225,6 +238,6 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 **Built with ❤️ for Indonesian investors exploring US markets**
 
-*33 modules · Real-time data · AI-powered · Mobile-ready · Beginner-friendly*
+*39 modules · Real-time data · AI-powered · ML predictions · Mobile-ready · Beginner-friendly*
 
 </div>
