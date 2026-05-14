@@ -6,7 +6,7 @@
 ![Next.js](https://img.shields.io/badge/Next.js-14.2-black)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688)
 ![Tailwind](https://img.shields.io/badge/Tailwind_CSS-3.4-38bdf8)
-![Modules](https://img.shields.io/badge/modules-32-purple)
+![Modules](https://img.shields.io/badge/modules-33-purple)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
 **Platform analisa saham US profesional** untuk membantu investor Indonesia membuat keputusan investasi yang lebih baik dan profit di pasar saham US.
@@ -19,6 +19,7 @@
 
 ## ✨ Highlights
 
+- 🔮 **Prediksi Saham** — Prediksi harga 1 hari, 1 minggu, 1 bulan + entry point & risk management
 - 🎯 **Stock Score 1-100** — Skor komprehensif per saham (Valuation + Quality + Growth + Momentum)
 - 🤖 **AI Natural Language Screener** — Ketik "show me tech stocks with PE under 20" → hasil otomatis
 - ⭐ **Daily Recommendations** — Top picks berdasarkan gaya (Konservatif / Balanced / Agresif)
@@ -48,6 +49,7 @@
 | **Rekomendasi Hari Ini** | Top 5 picks per gaya investasi (Conservative, Balanced, Aggressive) dengan Entry/SL/TP |
 | **Buy the Dip** | Detector saham bagus (skor >50) yang turun >3% hari ini — peluang beli saat diskon |
 | **Perbandingan Saham** | Compare hingga 5 saham side-by-side (10 metrik, highlight best/worst) |
+| **Prediksi Saham** | Prediksi harga 1 hari / 1 minggu / 1 bulan + entry point, stop loss, target, dan confidence level |
 | **Stock Screener** | Filter multi-kriteria (PE, ROE, Growth, Dividend, Sector) + 5 presets |
 | **AI Insights** | Natural language screener — ketik pertanyaan bahasa Inggris → filter otomatis |
 | **Earnings Calendar** | Jadwal laporan keuangan saham populer, EPS estimates, tips earnings season |
@@ -104,12 +106,12 @@
 ┌─────────────────────────────┐         ┌──────────────────────────────┐
 │     Frontend (Next.js 14)    │  HTTP   │      Backend (FastAPI)        │
 │                              │ ───────▶│                              │
-│  • App Router (32 pages)     │         │  • yfinance data adapter     │
+│  • App Router (33 pages)     │         │  • yfinance data adapter     │
 │  • Tailwind CSS + Glassmorp  │         │  • Technical indicators      │
 │  • React Query (caching)     │         │  • Screener engine           │
 │  • Lightweight Charts        │         │  • Swing/Scalp scanners      │
-│  • Lucide React icons       │         │  • Stock scoring engine      │
-│  • Framer Motion            │         │  • Recommendation engine     │
+│  • Lucide React icons       │         │  • Price prediction engine   │
+│  • Framer Motion            │         │  • Stock scoring engine      │
 │                              │         │  • Backtest simulator        │
 │                              │         │  • Macro data (VIX, yields)  │
 │                              │         │  • Buy-the-dip detector     │
@@ -126,6 +128,7 @@
 | `/stocks` | search, quote, profile, history, fundamentals, news | Stock data |
 | `/market` | indices, movers, sectors | Market overview |
 | `/technicals` | /{symbol} | SMA, EMA, RSI, MACD, BB, ATR, VWAP |
+| `/prediction` | /{symbol} | Prediksi harga 1d/1w/1m + entry point & key levels |
 | `/screener` | run (POST), presets | Multi-criteria screening |
 | `/swing` | scan, setups | Swing trade scanner |
 | `/scalping` | hot | Hot stocks scanner |
@@ -222,6 +225,6 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 **Built with ❤️ for Indonesian investors exploring US markets**
 
-*32 modules · Real-time data · AI-powered · Mobile-ready · Beginner-friendly*
+*33 modules · Real-time data · AI-powered · Mobile-ready · Beginner-friendly*
 
 </div>
