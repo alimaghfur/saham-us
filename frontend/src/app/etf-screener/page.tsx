@@ -52,7 +52,7 @@ export default function ETFScreenerPage() {
         <div className="space-y-6">
           {/* Recommendation */}
           {data.recommendation && (
-            <Card variant="glass">
+            <Card>
               <div className="flex items-start gap-3">
                 <Trophy size={18} className="shrink-0 text-primary mt-0.5" />
                 <div>
@@ -76,7 +76,6 @@ export default function ETFScreenerPage() {
                       <th className="pb-3 pr-4 text-right">Sharpe</th>
                       <th className="pb-3 pr-4 text-right">AUM</th>
                       <th className="pb-3 pr-4 text-right">Beta</th>
-                      <th className="pb-3">Rating</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border/20">
@@ -86,18 +85,13 @@ export default function ETFScreenerPage() {
                           {etf.symbol}
                           {etf.best_performer && <Star size={12} className="ml-1 inline text-yellow-500" />}
                         </td>
-                        <td className="py-3 pr-4 text-right tabular-nums">{etf.expense_ratio != null ? `${(etf.expense_ratio).toFixed(2)}%` : "—"}</td>
-                        <td className={cn("py-3 pr-4 text-right tabular-nums", etf.performance?.return_1y > 0 ? "text-bull" : "text-bear")}>
-                          {etf.performance?.return_1y != null ? `${(etf.performance?.return_1y).toFixed(1)}%` : "—"}
+                        <td className="py-3 pr-4 text-right tabular-nums">{etf.expense_ratio != null ? `${Number(etf.expense_ratio).toFixed(2)}%` : "—"}</td>
+                        <td className={cn("py-3 pr-4 text-right tabular-nums", (etf.performance?.return_1y ?? 0) > 0 ? "text-bull" : "text-bear")}>
+                          {etf.performance?.return_1y != null ? `${Number(etf.performance.return_1y).toFixed(1)}%` : "—"}
                         </td>
-                        <td className="py-3 pr-4 text-right tabular-nums">{etf.performance?.sharpe_ratio_1y?.toFixed(2) ?? "—"}</td>
+                        <td className="py-3 pr-4 text-right tabular-nums">{etf.performance?.sharpe_ratio_1y != null ? Number(etf.performance.sharpe_ratio_1y).toFixed(2) : "—"}</td>
                         <td className="py-3 pr-4 text-right tabular-nums text-muted-foreground">{etf.aum ? `$${(etf.aum / 1e9).toFixed(0)}B` : "—"}</td>
-                        <td className="py-3 pr-4 text-right tabular-nums">{etf.performance?.beta?.toFixed(2) ?? "—"}</td>
-                        <td className="py-3">
-                          <Badge variant={etf.rating === "Strong Buy" ? "success" : etf.rating === "Sell" ? "danger" : "default"}>
-                            {etf.rating ?? "—"}
-                          </Badge>
-                        </td>
+                        <td className="py-3 pr-4 text-right tabular-nums">{etf.performance?.beta != null ? Number(etf.performance.beta).toFixed(2) : "—"}</td>
                       </tr>
                     ))}
                   </tbody>
