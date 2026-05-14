@@ -9,8 +9,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from app import __version__
 from app.api import (
     advanced, backtest, macro, market, ml_predict, opportunities, options,
-    prediction, quantitative, quant, scalping, score, screener, sentiment,
-    stocks, swing, technicals, telegram, verdict,
+    prediction, pro_features, quantitative, quant, scalping, score, screener,
+    sentiment, stocks, swing, technicals, telegram, verdict,
 )
 from app.core.config import get_settings
 from app.core.logging import configure_logging
@@ -61,6 +61,7 @@ app.include_router(ml_predict.router, prefix=API_V1)
 app.include_router(options.router, prefix=API_V1)
 app.include_router(quantitative.router, prefix=API_V1)
 app.include_router(telegram.router, prefix=API_V1)
+app.include_router(pro_features.router, prefix=API_V1)
 
 
 @app.get("/", tags=["meta"])

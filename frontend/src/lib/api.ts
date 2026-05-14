@@ -162,4 +162,26 @@ export const api = {
   telegramSetup: () => fetchJson<any>(`${BASE}/telegram/setup`),
   checkAlert: (data: any) =>
     fetchJson<any>(`${BASE}/telegram/check-alert`, { method: "POST", body: JSON.stringify(data) }),
+
+  // --- pro features ---
+  insiderTrading: (symbol: string) => fetchJson<any>(`${BASE}/pro/insider/${symbol}`),
+  unusualOptions: (symbol: string) => fetchJson<any>(`${BASE}/pro/unusual-options/${symbol}`),
+  earningsPredict: (symbol: string) => fetchJson<any>(`${BASE}/pro/earnings-predict/${symbol}`),
+  portfolioOptimize: (symbols: string[]) =>
+    fetchJson<any>(`${BASE}/pro/portfolio-optimize`, { method: "POST", body: JSON.stringify({ symbols }) }),
+  economicCalendar: (daysAhead = 30, daysBack = 7) =>
+    fetchJson<any>(`${BASE}/pro/economic-calendar?days_ahead=${daysAhead}&days_back=${daysBack}`),
+  patterns: (symbol: string) => fetchJson<any>(`${BASE}/pro/patterns/${symbol}`),
+  darkPool: (symbol: string) => fetchJson<any>(`${BASE}/pro/dark-pool/${symbol}`),
+  socialSentiment: (symbol: string) => fetchJson<any>(`${BASE}/pro/social-sentiment/${symbol}`),
+  dividends: (symbol: string) => fetchJson<any>(`${BASE}/pro/dividends/${symbol}`),
+  dripSimulate: (symbol: string, initial = 10000, monthly = 500, years = 20) =>
+    fetchJson<any>(`${BASE}/pro/drip-simulate/${symbol}?initial_investment=${initial}&monthly_contribution=${monthly}&years=${years}`),
+  etfProfile: (symbol: string) => fetchJson<any>(`${BASE}/pro/etf/${symbol}`),
+  etfCompare: (symbols: string[]) => fetchJson<any>(`${BASE}/pro/etf-compare?symbols=${symbols.join(",")}`),
+  marketBreadth: (market = "S&P 500") => fetchJson<any>(`${BASE}/pro/market-breadth?market=${encodeURIComponent(market)}`),
+  copyTradingTraders: (num = 10, sortBy = "return") =>
+    fetchJson<any>(`${BASE}/pro/copy-trading/traders?num=${num}&sort_by=${sortBy}`),
+  copyTradingSimulate: (traderId: string, allocation = 10000) =>
+    fetchJson<any>(`${BASE}/pro/copy-trading/simulate/${traderId}?allocation=${allocation}`),
 };
