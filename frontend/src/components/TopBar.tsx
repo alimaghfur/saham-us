@@ -1,22 +1,39 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import {
   Bell,
   Command,
+  LogOut,
   Menu,
   Search,
-  TrendingUp,
-  X,
+  Settings,
+  User,
 } from "lucide-react";
 
 import { cn } from "@/lib/cn";
+import { useAuthStore } from "@/lib/auth-store";
 
 export function TopBar() {
   const router = useRouter();
   const [value, setValue] = useState("");
   const [focused, setFocused] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  const { user, logout } = useAuthStore();
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, []);
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -26,6 +43,17 @@ export function TopBar() {
     setValue("");
     setFocused(false);
   }
+
+  function handleLogout() {
+    logout();
+    window.location.href = "/login";
+  }
+
+  const userInitial = user?.full_name
+    ? user.full_name.charAt(0).toUpperCase()
+    : user?.username
+      ? user.username.charAt(0).toUpperCase()
+      : "U";
 
   return (
     <header className="flex h-14 items-center gap-4 border-b border-border/50 bg-sidebar/80 px-4 backdrop-blur-xl sm:px-6">
@@ -81,10 +109,84 @@ export function TopBar() {
           <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-primary" />
         </button>
 
-        {/* User Avatar */}
-        <button className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-primary text-xs font-bold text-white shadow-glow-sm transition-transform hover:scale-105">
-          U
-        </button>
+        {/* User Avatar + Dropdown */}
+        <div className="relative" ref={menuRef}>
+          <button
+            onClick={() => setMenuOpen(!menuOpen)}
+            className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-primary text-xs font-bold text-white shadow-glow-sm transition-transform hover:scale-105"
+          >
+            {userInitial}
+          </button>
+
+          {/* Dropdown Menu */}
+          {menuOpen && (
+            <div className="absolute right-0 top-full z-50 mt-2 w-72 animate-fade-in rounded-xl border border-border/50 bg-card/95 p-2 shadow-xl backdrop-blur-xl">
+              {/* User Info */}
+              <div className="border-b border-border/30 px-3 py-3">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-primary text-sm font-bold text-white">
+                    {userInitial}
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-sm font-semibold text-foreground">
+                      {user?.full_name || user?.username || "User"}
+                    </p>
+                    <p className="truncate text-xs text-muted-foreground">
+                      {user?.email || ""}
+                    </p>
+                  </div>
+                </div>
+                {user?.username && (
+                  <div className="mt-2 flex items-center gap-2">
+                    <span className="rounded-md bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
+                      @{user.username}
+                    </span>
+                    {user.is_verified && (
+                      <span className="rounded-md bg-green-500/10 px-2 py-0.5 text-[10px] font-medium text-green-400">
+                        Verified
+                      </span>
+                    )}
+                  </div>
+                )}
+              </div>
+
+              {/* Menu Items */}
+              <div className="py-1">
+                <button
+                  onClick={() => {
+                    setMenuOpen(false);
+                    router.push("/account");
+                  }}
+                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                >
+                  <User size={16} />
+                  <span>Profil Saya</span>
+                </button>
+                <button
+                  onClick={() => {
+                    setMenuOpen(false);
+                    router.push("/settings");
+                  }}
+                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                >
+                  <Settings size={16} />
+                  <span>Pengaturan</span>
+                </button>
+              </div>
+
+              {/* Logout */}
+              <div className="border-t border-border/30 pt-1">
+                <button
+                  onClick={handleLogout}
+                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-red-400 transition-colors hover:bg-red-500/10 hover:text-red-300"
+                >
+                  <LogOut size={16} />
+                  <span>Keluar</span>
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </header>
   );
