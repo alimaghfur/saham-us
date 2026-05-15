@@ -8,9 +8,43 @@ import { MobileNav } from "@/components/MobileNav";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Saham-US — Professional US Stock Market Analysis",
+  title: {
+    default: "Saham-US — Professional US Stock Market Analysis",
+    template: "%s | Saham-US",
+  },
   description:
-    "Professional-grade US stock analysis platform for investors, swing traders, and scalpers. Real-time market data, technical analysis, and AI-powered insights.",
+    "Professional-grade US stock analysis platform for Indonesian investors. Real-time market data, technical analysis, ML predictions, and AI-powered insights for US stock market trading.",
+  keywords: [
+    "saham US", "stock market", "analisa saham", "trading", "investasi",
+    "technical analysis", "screener", "swing trading", "scalping",
+    "machine learning", "prediksi saham", "market data",
+  ],
+  authors: [{ name: "Saham-US Team" }],
+  creator: "Saham-US",
+  metadataBase: new URL("https://saham-us.com"),
+  openGraph: {
+    type: "website",
+    locale: "id_ID",
+    url: "https://saham-us.com",
+    siteName: "Saham-US",
+    title: "Saham-US — Professional US Stock Market Analysis",
+    description:
+      "Platform analisa saham US profesional untuk investor Indonesia. Data real-time, technical analysis, ML predictions, dan AI-powered insights.",
+    images: [{ url: "/og-image.png", width: 1200, height: 630, alt: "Saham-US Platform" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Saham-US — Professional US Stock Market Analysis",
+    description:
+      "Platform analisa saham US profesional untuk investor Indonesia.",
+    images: ["/og-image.png"],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true },
+  },
+  manifest: "/manifest.json",
 };
 
 export default function RootLayout({

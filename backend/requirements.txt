@@ -11,3 +11,24 @@ redis==5.2.1
 python-multipart==0.0.19
 orjson==3.10.15
 structlog==24.4.0
+
+# Authentication
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+bcrypt==4.2.1
+
+# Database
+sqlalchemy==2.0.36
+aiosqlite==0.20.0
+alembic==1.14.0
+
+# Security
+slowapi==0.1.9
+
+# Testing
+pytest==8.3.4
+pytest-asyncio==0.24.0
+httpx==0.28.1
+
+# Monitoring
+sentry-sdk[fastapi]==2.19.0

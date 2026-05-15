@@ -34,13 +34,25 @@ class Settings(BaseSettings):
 
     # Infrastructure
     redis_url: str = "redis://localhost:6379"
-    database_url: str = ""
+    database_url: str = "sqlite+aiosqlite:///./saham_us.db"
 
     # Cache TTL (seconds)
     cache_ttl_quote: int = 60          # 1 min (was 15s — too aggressive)
     cache_ttl_history: int = 300       # 5 min
     cache_ttl_fundamentals: int = 86400  # 24h
     cache_ttl_news: int = 600          # 10 min
+
+    # JWT / Auth
+    jwt_secret_key: str = "change-me-in-production-use-openssl-rand-hex-32"
+    jwt_algorithm: str = "HS256"
+    jwt_access_token_expire_minutes: int = 60 * 24  # 24 hours
+    jwt_refresh_token_expire_days: int = 7
+
+    # Rate Limiting
+    rate_limit_per_minute: int = 60
+
+    # Monitoring
+    sentry_dsn: str = ""
 
     @property
     def cors_origins_list(self) -> List[str]:

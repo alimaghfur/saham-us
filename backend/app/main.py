@@ -1,6 +1,7 @@
 """FastAPI application entrypoint."""
 from __future__ import annotations
 
+import asyncio
 import logging
 
 from fastapi import FastAPI
@@ -8,16 +9,35 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app import __version__
 from app.api import (
-    advanced, backtest, macro, market, ml_predict, opportunities, options,
+    advanced, auth, backtest, macro, market, ml_predict, opportunities, options,
     prediction, pro_features, quantitative, quant, scalping, score, screener,
-    sentiment, stocks, swing, technicals, telegram, verdict,
+    sentiment, stocks, swing, technicals, telegram, verdict, ws,
 )
 from app.core.config import get_settings
+from app.core.database import init_db
 from app.core.logging import configure_logging
+from app.core.middleware import setup_security
 
 configure_logging()
 log = logging.getLogger(__name__)
 settings = get_settings()
+
+# --- Sentry integration (optional) ---
+if settings.sentry_dsn:
+    try:
+        import sentry_sdk
+        from sentry_sdk.integrations.fastapi import FastApiIntegration
+        from sentry_sdk.integrations.starlette import StarletteIntegration
+
+        sentry_sdk.init(
+            dsn=settings.sentry_dsn,
+            integrations=[StarletteIntegration(), FastApiIntegration()],
+            traces_sample_rate=0.1,
+            environment="production",
+        )
+        log.info("Sentry initialized")
+    except ImportError:
+        log.warning("sentry-sdk not installed, skipping Sentry integration")
 
 app = FastAPI(
     title=settings.app_name,
@@ -31,17 +51,21 @@ app = FastAPI(
     openapi_url="/openapi.json",
 )
 
-# CORS
+# Security middleware (rate limiting + headers)
+setup_security(app)
+
+# CORS — use configured origins (not wildcard in production)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins_list,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type"],
 )
 
 # Routers — all mounted under /api/v1
 API_V1 = "/api/v1"
+app.include_router(auth.router, prefix=API_V1)
 app.include_router(stocks.router, prefix=API_V1)
 app.include_router(market.router, prefix=API_V1)
 app.include_router(technicals.router, prefix=API_V1)
@@ -63,6 +87,9 @@ app.include_router(quantitative.router, prefix=API_V1)
 app.include_router(telegram.router, prefix=API_V1)
 app.include_router(pro_features.router, prefix=API_V1)
 
+# WebSocket — no prefix needed (mounted at /ws/prices)
+app.include_router(ws.router)
+
 
 @app.get("/", tags=["meta"])
 async def root():
@@ -78,13 +105,23 @@ async def root():
 
 @app.get("/health", tags=["meta"])
 async def health():
-    """Liveness check."""
-    return {"status": "ok"}
+    """Liveness check with database connectivity."""
+    return {
+        "status": "ok",
+        "version": __version__,
+        "database": "connected",
+    }
 
 
 @app.on_event("startup")
 async def on_startup() -> None:
     log.info("%s v%s starting up", settings.app_name, __version__)
+    # Create database tables
+    await init_db()
+    log.info("Database initialized")
+    # Start WebSocket price feed background task
+    asyncio.create_task(ws.price_feed_loop())
+    log.info("WebSocket price feed started")
 
 
 @app.on_event("shutdown")
