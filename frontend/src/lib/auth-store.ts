@@ -88,6 +88,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     });
 
     if (!res.ok) {
+      if (res.status === 404) {
+        throw new Error("Server auth belum aktif. Pastikan backend sudah install: pip install -r requirements.txt");
+      }
       const data = await res.json().catch(() => ({}));
       throw new Error(data.detail || "Login gagal. Periksa email dan password.");
     }
@@ -95,6 +98,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const data = await res.json();
     get().setTokens(data.access_token, data.refresh_token);
     await get().fetchUser();
+    // Redirect to dashboard after successful login
+    if (typeof window !== "undefined") {
+      window.location.href = "/";
+    }
   },
 
   register: async (email, username, password, fullName) => {
@@ -110,6 +117,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     });
 
     if (!res.ok) {
+      if (res.status === 404) {
+        throw new Error("Server auth belum aktif. Pastikan backend sudah install: pip install -r requirements.txt");
+      }
       const data = await res.json().catch(() => ({}));
       throw new Error(data.detail || "Registrasi gagal. Coba lagi.");
     }
@@ -117,6 +127,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const data = await res.json();
     get().setTokens(data.access_token, data.refresh_token);
     await get().fetchUser();
+    // Redirect to dashboard after successful registration
+    if (typeof window !== "undefined") {
+      window.location.href = "/";
+    }
   },
 
   fetchUser: async () => {
