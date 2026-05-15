@@ -26,6 +26,7 @@ import {
   TrendingDown,
   TrendingUp,
   Trophy,
+  UserCircle,
   Zap,
   type LucideIcon,
 } from "lucide-react";
@@ -114,6 +115,7 @@ export const menuSections: MenuSection[] = [
   {
     label: "Settings",
     items: [
+      { name: "Akun Saya", href: "/account", icon: UserCircle, description: "Profil & informasi akun" },
       { name: "Settings", href: "/settings", icon: Settings, description: "Preferensi app" },
     ],
   },
