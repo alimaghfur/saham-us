@@ -9,14 +9,12 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app import __version__
 from app.api import (
-    advanced, auth, backtest, macro, market, ml_predict, opportunities, options,
+    advanced, backtest, macro, market, ml_predict, opportunities, options,
     prediction, pro_features, quantitative, quant, scalping, score, screener,
-    sentiment, stocks, swing, technicals, telegram, verdict, ws,
+    sentiment, stocks, swing, technicals, telegram, verdict,
 )
 from app.core.config import get_settings
-from app.core.database import init_db
 from app.core.logging import configure_logging
-from app.core.middleware import setup_security
 
 configure_logging()
 log = logging.getLogger(__name__)
@@ -51,8 +49,12 @@ app = FastAPI(
     openapi_url="/openapi.json",
 )
 
-# Security middleware (rate limiting + headers)
-setup_security(app)
+# Security middleware (rate limiting + headers) — graceful if slowapi missing
+try:
+    from app.core.middleware import setup_security
+    setup_security(app)
+except ImportError:
+    log.warning("Security middleware not available")
 
 # CORS — use configured origins (not wildcard in production)
 app.add_middleware(
@@ -65,7 +67,15 @@ app.add_middleware(
 
 # Routers — all mounted under /api/v1
 API_V1 = "/api/v1"
-app.include_router(auth.router, prefix=API_V1)
+
+# Auth router (requires SQLAlchemy + jose + passlib)
+try:
+    from app.api import auth
+    app.include_router(auth.router, prefix=API_V1)
+    log.info("Auth router loaded")
+except ImportError as e:
+    log.warning("Auth router not available: %s", e)
+
 app.include_router(stocks.router, prefix=API_V1)
 app.include_router(market.router, prefix=API_V1)
 app.include_router(technicals.router, prefix=API_V1)
@@ -87,8 +97,13 @@ app.include_router(quantitative.router, prefix=API_V1)
 app.include_router(telegram.router, prefix=API_V1)
 app.include_router(pro_features.router, prefix=API_V1)
 
-# WebSocket — no prefix needed (mounted at /ws/prices)
-app.include_router(ws.router)
+# WebSocket router
+try:
+    from app.api import ws
+    app.include_router(ws.router)
+    log.info("WebSocket router loaded")
+except ImportError as e:
+    log.warning("WebSocket router not available: %s", e)
 
 
 @app.get("/", tags=["meta"])
@@ -105,23 +120,30 @@ async def root():
 
 @app.get("/health", tags=["meta"])
 async def health():
-    """Liveness check with database connectivity."""
+    """Liveness check."""
     return {
         "status": "ok",
         "version": __version__,
-        "database": "connected",
     }
 
 
 @app.on_event("startup")
 async def on_startup() -> None:
     log.info("%s v%s starting up", settings.app_name, __version__)
-    # Create database tables
-    await init_db()
-    log.info("Database initialized")
-    # Start WebSocket price feed background task
-    asyncio.create_task(ws.price_feed_loop())
-    log.info("WebSocket price feed started")
+    # Initialize database (if available)
+    try:
+        from app.core.database import init_db
+        await init_db()
+        log.info("Database initialized")
+    except Exception as e:
+        log.warning("Database init skipped: %s", e)
+    # Start WebSocket price feed (if available)
+    try:
+        from app.api.ws import price_feed_loop
+        asyncio.create_task(price_feed_loop())
+        log.info("WebSocket price feed started")
+    except Exception as e:
+        log.warning("WebSocket feed skipped: %s", e)
 
 
 @app.on_event("shutdown")
