@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 
 import { QueryProvider } from "@/components/QueryProvider";
-import { Sidebar } from "@/components/Sidebar";
-import { TopBar } from "@/components/TopBar";
-import { MobileNav } from "@/components/MobileNav";
+import { AuthGuard } from "@/components/AuthGuard";
 
 import "./globals.css";
 
@@ -68,20 +66,9 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen bg-background antialiased">
         <QueryProvider>
-          <div className="flex h-screen overflow-hidden">
-            <Sidebar />
-            <div className="flex flex-1 flex-col overflow-hidden">
-              <TopBar />
-              <main className="scrollbar-thin relative flex-1 overflow-y-auto pb-16 lg:pb-0">
-                {/* Subtle background pattern */}
-                <div className="pointer-events-none absolute inset-0 dot-pattern opacity-30" />
-                <div className="relative px-4 py-6 sm:px-6 lg:px-8">
-                  {children}
-                </div>
-              </main>
-            </div>
-          </div>
-          <MobileNav />
+          <AuthGuard>
+            {children}
+          </AuthGuard>
         </QueryProvider>
       </body>
     </html>

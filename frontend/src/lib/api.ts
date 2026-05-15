@@ -19,14 +19,32 @@ import type {
 
 const BASE = "/api/v1";
 
+function getAuthHeaders(): Record<string, string> {
+  if (typeof window === "undefined") return {};
+  const token = localStorage.getItem("access_token");
+  return token ? { Authorization: `Bearer ${token}` } : {};
+}
+
 async function fetchJson<T>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(path, {
     ...init,
     headers: {
       "Content-Type": "application/json",
+      ...getAuthHeaders(),
       ...(init?.headers ?? {}),
     },
   });
+
+  // If 401, clear tokens and redirect to login
+  if (res.status === 401) {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
+      window.location.href = "/login";
+    }
+    throw new Error("Sesi Anda telah berakhir. Silakan login kembali.");
+  }
+
   if (!res.ok) {
     throw new Error(`API ${res.status}: ${await res.text()}`);
   }
