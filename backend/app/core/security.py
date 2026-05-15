@@ -1,8 +1,14 @@
 """Security utilities: password hashing, JWT token creation/verification."""
 from __future__ import annotations
 
+import logging
+import warnings
 from datetime import datetime, timedelta, timezone
 from typing import Optional
+
+# Suppress passlib bcrypt version warning (works fine with bcrypt 4.2+)
+warnings.filterwarnings("ignore", message=".*error reading bcrypt version.*")
+warnings.filterwarnings("ignore", category=DeprecationWarning, module="passlib")
 
 from jose import JWTError, jwt
 from passlib.context import CryptContext
