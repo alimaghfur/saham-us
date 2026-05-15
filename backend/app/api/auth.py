@@ -1,7 +1,7 @@
 """Authentication API routes: register, login, refresh, me."""
 from __future__ import annotations
 
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, Field
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -23,7 +23,7 @@ router = APIRouter(prefix="/auth", tags=["auth"])
 # --- Schemas ---
 
 class RegisterRequest(BaseModel):
-    email: EmailStr
+    email: str = Field(min_length=5, max_length=255)
     username: str = Field(min_length=3, max_length=50)
     password: str = Field(min_length=8, max_length=100)
     full_name: str | None = None
