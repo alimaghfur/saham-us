@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import {
   Bell,
   Command,
@@ -21,19 +22,37 @@ export function TopBar() {
   const [focused, setFocused] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const buttonRef = useRef<HTMLButtonElement>(null);
+  const [dropdownPos, setDropdownPos] = useState({ top: 0, right: 0 });
 
   const { user, logout } = useAuthStore();
 
   // Close menu when clicking outside
   useEffect(() => {
     function handleClick(e: MouseEvent) {
-      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+      if (
+        menuRef.current &&
+        !menuRef.current.contains(e.target as Node) &&
+        buttonRef.current &&
+        !buttonRef.current.contains(e.target as Node)
+      ) {
         setMenuOpen(false);
       }
     }
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
+
+  // Calculate dropdown position when opened
+  useEffect(() => {
+    if (menuOpen && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setDropdownPos({
+        top: rect.bottom + 8,
+        right: window.innerWidth - rect.right,
+      });
+    }
+  }, [menuOpen]);
 
   function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -54,6 +73,81 @@ export function TopBar() {
     : user?.username
       ? user.username.charAt(0).toUpperCase()
       : "U";
+
+  const dropdown = menuOpen
+    ? createPortal(
+        <div
+          ref={menuRef}
+          style={{ top: dropdownPos.top, right: dropdownPos.right }}
+          className="fixed z-[99999] w-72 animate-fade-in rounded-xl border border-border/50 bg-card p-2 shadow-2xl"
+        >
+          {/* User Info */}
+          <div className="border-b border-border/30 px-3 py-3">
+            <div className="flex items-center gap-3">
+              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-primary text-sm font-bold text-white">
+                {userInitial}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-semibold text-foreground">
+                  {user?.full_name || user?.username || "User"}
+                </p>
+                <p className="truncate text-xs text-muted-foreground">
+                  {user?.email || ""}
+                </p>
+              </div>
+            </div>
+            {user?.username && (
+              <div className="mt-2 flex items-center gap-2">
+                <span className="rounded-md bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
+                  @{user.username}
+                </span>
+                {user.is_verified && (
+                  <span className="rounded-md bg-green-500/10 px-2 py-0.5 text-[10px] font-medium text-green-400">
+                    Verified
+                  </span>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Menu Items */}
+          <div className="py-1">
+            <button
+              onClick={() => {
+                setMenuOpen(false);
+                router.push("/account");
+              }}
+              className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
+              <User size={16} />
+              <span>Profil Saya</span>
+            </button>
+            <button
+              onClick={() => {
+                setMenuOpen(false);
+                router.push("/settings");
+              }}
+              className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
+              <Settings size={16} />
+              <span>Pengaturan</span>
+            </button>
+          </div>
+
+          {/* Logout */}
+          <div className="border-t border-border/30 pt-1">
+            <button
+              onClick={handleLogout}
+              className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-red-400 transition-colors hover:bg-red-500/10 hover:text-red-300"
+            >
+              <LogOut size={16} />
+              <span>Keluar</span>
+            </button>
+          </div>
+        </div>,
+        document.body,
+      )
+    : null;
 
   return (
     <header className="flex h-14 items-center gap-4 border-b border-border/50 bg-sidebar/80 px-4 backdrop-blur-xl sm:px-6">
@@ -109,85 +203,18 @@ export function TopBar() {
           <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-primary" />
         </button>
 
-        {/* User Avatar + Dropdown */}
-        <div className="relative" ref={menuRef}>
-          <button
-            onClick={() => setMenuOpen(!menuOpen)}
-            className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-primary text-xs font-bold text-white shadow-glow-sm transition-transform hover:scale-105"
-          >
-            {userInitial}
-          </button>
-
-          {/* Dropdown Menu */}
-          {menuOpen && (
-            <div className="fixed right-4 top-12 z-[9999] mt-2 w-72 animate-fade-in rounded-xl border border-border/50 bg-card p-2 shadow-2xl backdrop-blur-xl">
-              {/* User Info */}
-              <div className="border-b border-border/30 px-3 py-3">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-gradient-primary text-sm font-bold text-white">
-                    {userInitial}
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <p className="truncate text-sm font-semibold text-foreground">
-                      {user?.full_name || user?.username || "User"}
-                    </p>
-                    <p className="truncate text-xs text-muted-foreground">
-                      {user?.email || ""}
-                    </p>
-                  </div>
-                </div>
-                {user?.username && (
-                  <div className="mt-2 flex items-center gap-2">
-                    <span className="rounded-md bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary">
-                      @{user.username}
-                    </span>
-                    {user.is_verified && (
-                      <span className="rounded-md bg-green-500/10 px-2 py-0.5 text-[10px] font-medium text-green-400">
-                        Verified
-                      </span>
-                    )}
-                  </div>
-                )}
-              </div>
-
-              {/* Menu Items */}
-              <div className="py-1">
-                <button
-                  onClick={() => {
-                    setMenuOpen(false);
-                    router.push("/account");
-                  }}
-                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                >
-                  <User size={16} />
-                  <span>Profil Saya</span>
-                </button>
-                <button
-                  onClick={() => {
-                    setMenuOpen(false);
-                    router.push("/settings");
-                  }}
-                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                >
-                  <Settings size={16} />
-                  <span>Pengaturan</span>
-                </button>
-              </div>
-
-              {/* Logout */}
-              <div className="border-t border-border/30 pt-1">
-                <button
-                  onClick={handleLogout}
-                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-red-400 transition-colors hover:bg-red-500/10 hover:text-red-300"
-                >
-                  <LogOut size={16} />
-                  <span>Keluar</span>
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
+        {/* User Avatar */}
+        <button
+          ref={buttonRef}
+          onClick={() => setMenuOpen(!menuOpen)}
+          className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-primary text-xs font-bold text-white shadow-glow-sm transition-transform hover:scale-105"
+        >
+          {userInitial}
+        </button>
       </div>
+
+      {/* Portal dropdown */}
+      {dropdown}
     </header>
   );
 }
