@@ -125,6 +125,16 @@ async def refresh_token(body: RefreshRequest, db: AsyncSession = Depends(get_db)
     )
 
 
+class UpdateProfileRequest(BaseModel):
+    full_name: str | None = None
+    username: str | None = Field(default=None, min_length=3, max_length=50)
+
+
+class ChangePasswordRequest(BaseModel):
+    current_password: str
+    new_password: str = Field(min_length=8, max_length=100)
+
+
 @router.get("/me", response_model=UserResponse)
 async def get_me(current_user: User = Depends(get_current_user)):
     """Get current authenticated user profile."""
@@ -137,3 +147,51 @@ async def get_me(current_user: User = Depends(get_current_user)):
         is_verified=current_user.is_verified,
         created_at=current_user.created_at.isoformat(),
     )
+
+
+@router.put("/me", response_model=UserResponse)
+async def update_profile(
+    body: UpdateProfileRequest,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Update current user profile (name, username)."""
+    if body.username and body.username != current_user.username:
+        # Check if new username is taken
+        result = await db.execute(select(User).where(User.username == body.username))
+        if result.scalar_one_or_none():
+            raise HTTPException(status_code=400, detail="Username already taken")
+        current_user.username = body.username
+
+    if body.full_name is not None:
+        current_user.full_name = body.full_name
+
+    db.add(current_user)
+    await db.flush()
+
+    return UserResponse(
+        id=current_user.id,
+        email=current_user.email,
+        username=current_user.username,
+        full_name=current_user.full_name,
+        is_active=current_user.is_active,
+        is_verified=current_user.is_verified,
+        created_at=current_user.created_at.isoformat(),
+    )
+
+
+@router.put("/me/password")
+async def change_password(
+    body: ChangePasswordRequest,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Change current user password."""
+    if not verify_password(body.current_password, current_user.hashed_password):
+        raise HTTPException(status_code=400, detail="Password lama salah")
+
+    current_user.hashed_password = hash_password(body.new_password)
+    db.add(current_user)
+    await db.flush()
+
+    return {"message": "Password berhasil diubah"}
