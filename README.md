@@ -2,11 +2,15 @@
 
 <div align="center">
 
-![Version](https://img.shields.io/badge/version-1.0.0-blue)
+![Version](https://img.shields.io/badge/version-2.0.0-blue)
 ![Next.js](https://img.shields.io/badge/Next.js-14.2-black)
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688)
 ![Tailwind](https://img.shields.io/badge/Tailwind_CSS-3.4-38bdf8)
 ![Modules](https://img.shields.io/badge/modules-39-purple)
+![CI](https://img.shields.io/badge/CI%2FCD-GitHub_Actions-2088FF)
+![Auth](https://img.shields.io/badge/Auth-JWT-orange)
+![WebSocket](https://img.shields.io/badge/WebSocket-Real--time-brightgreen)
+![Tests](https://img.shields.io/badge/tests-20%2B-success)
 ![License](https://img.shields.io/badge/license-MIT-green)
 
 **Platform analisa saham US profesional** untuk membantu investor Indonesia membuat keputusan investasi yang lebih baik dan profit di pasar saham US.
@@ -19,6 +23,13 @@
 
 ## ✨ Highlights
 
+- 🔐 **Authentication** — JWT-based auth (register, login, refresh token) dengan bcrypt password hashing
+- 🗄️ **Database** — SQLAlchemy async + SQLite/PostgreSQL (User, Portfolio, Watchlist, Journal models)
+- 🛡️ **Security** — Rate limiting 60req/min, security headers (HSTS, XSS), proper CORS
+- 🔌 **Real-time WebSocket** — Live price streaming via `/ws/prices` (subscribe/unsubscribe per symbol)
+- 🧪 **Unit Tests** — 20+ pytest tests (auth, security, health endpoints)
+- ⚙️ **CI/CD** — GitHub Actions (lint, test, build, Docker, security audit)
+- 📡 **Monitoring** — Sentry integration, enhanced health checks
 - 🔮 **Prediksi Saham** — Prediksi harga 1 hari, 1 minggu, 1 bulan + entry point & risk management
 - 🧠 **ML Prediction** — Ensemble 4 model Machine Learning (Momentum, Mean Reversion, Trend, Volatility)
 - 📰 **Sentimen Berita** — NLP analisis sentimen dari berita real-time (bullish/bearish scoring)
@@ -111,20 +122,27 @@
 ## 🏗️ Architecture
 
 ```
-┌─────────────────────────────┐         ┌──────────────────────────────┐
-│     Frontend (Next.js 14)    │  HTTP   │      Backend (FastAPI)        │
-│                              │ ───────▶│                              │
-│  • App Router (33 pages)     │         │  • yfinance data adapter     │
-│  • Tailwind CSS + Glassmorp  │         │  • Technical indicators      │
-│  • React Query (caching)     │         │  • Screener engine           │
-│  • Lightweight Charts        │         │  • Swing/Scalp scanners      │
-│  • Lucide React icons       │         │  • Price prediction engine   │
-│  • Framer Motion            │         │  • Stock scoring engine      │
-│                              │         │  • Backtest simulator        │
-│                              │         │  • Macro data (VIX, yields)  │
-│                              │         │  • Buy-the-dip detector     │
-│                              │         │  • Peer comparison           │
-└─────────────────────────────┘         └──────────────────────────────┘
+┌─────────────────────────────┐  HTTP/WS  ┌──────────────────────────────┐
+│     Frontend (Next.js 14)    │ ────────▶ │      Backend (FastAPI)        │
+│                              │           │                              │
+│  • App Router (33 pages)     │           │  • JWT Authentication        │
+│  • Tailwind CSS + Glassmorp  │           │  • SQLAlchemy Async ORM      │
+│  • React Query (caching)     │           │  • Rate Limiting (60/min)    │
+│  • Lightweight Charts        │           │  • WebSocket Price Stream    │
+│  • Lucide React icons       │           │  • yfinance data adapter     │
+│  • Framer Motion            │           │  • Technical indicators      │
+│  • Error Boundary           │           │  • Screener engine           │
+│  • SEO / OpenGraph          │           │  • Swing/Scalp scanners      │
+│                              │           │  • Price prediction engine   │
+│                              │           │  • Sentry monitoring         │
+└─────────────────────────────┘           └──────────────────────────────┘
+                                                       │
+                                              ┌────────┴────────┐
+                                              │   Database       │
+                                              │  SQLite/Postgres │
+                                              │  (Users, Portfol │
+                                              │   Watchlist, etc) │
+                                              └─────────────────┘
 ```
 
 ---
@@ -133,6 +151,7 @@
 
 | Prefix | Endpoints | Description |
 |--------|-----------|-------------|
+| `/auth` | register, login, refresh, me | Authentication & user management |
 | `/stocks` | search, quote, profile, history, fundamentals, news | Stock data |
 | `/market` | indices, movers, sectors | Market overview |
 | `/technicals` | /{symbol} | SMA, EMA, RSI, MACD, BB, ATR, VWAP |
@@ -149,6 +168,7 @@
 | `/backtest` | run (POST), strategies | Strategy backtesting |
 | `/score` | analyze/{symbol}, recommendations/top | Stock scoring & recommendations |
 | `/opportunities` | dips, compare | Buy-the-dip & peer comparison |
+| `ws://` | /ws/prices | WebSocket real-time price streaming |
 
 Full API docs: `http://localhost:8000/docs`
 
@@ -167,6 +187,13 @@ cd backend
 python -m venv .venv
 source .venv/bin/activate        # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
+
+# Set environment (copy and edit)
+cp .env.example .env
+
+# Generate secure JWT secret for production
+export JWT_SECRET_KEY=$(openssl rand -hex 32)
+
 uvicorn app.main:app --reload --port 8000
 ```
 
@@ -181,6 +208,13 @@ npm run dev
 ```
 
 App: http://localhost:3000
+
+### Run Tests
+
+```bash
+cd backend
+pytest tests/ -v
+```
 
 ### Docker Compose
 
@@ -201,7 +235,14 @@ docker-compose up --build
 | **Icons** | Lucide React |
 | **Animation** | Framer Motion, CSS keyframes |
 | **Backend** | FastAPI, Python 3.11, Pydantic |
+| **Auth** | JWT (python-jose), bcrypt (passlib) |
+| **Database** | SQLAlchemy 2.0 (async), SQLite / PostgreSQL |
+| **Real-time** | WebSocket (FastAPI native) |
 | **Data** | yfinance, pandas, numpy |
+| **Security** | slowapi (rate limit), security headers middleware |
+| **Testing** | pytest, pytest-asyncio, httpx |
+| **CI/CD** | GitHub Actions (lint, test, build, audit) |
+| **Monitoring** | Sentry SDK (optional) |
 | **Cache** | In-memory TTL dict (Redis optional) |
 | **Deploy** | Docker, Docker Compose |
 
@@ -218,7 +259,8 @@ docker-compose up --build
 - [x] Phase 7 — DCA Planner, Market Hours (WIB), ETF info
 - [x] Phase 8 — Earnings Calendar, Mobile Bottom Navigation
 - [x] Phase 9 — Weekly Recap, Risk Dashboard, Goal Tracker
-- [ ] Phase 10 — Social Sentiment, Export PDF, Real-time WebSocket
+- [x] Phase 10 — Real-time WebSocket, Authentication, Database, CI/CD, Security, Testing, Monitoring
+- [ ] Phase 11 — Social Sentiment, Export PDF, Advanced Analytics
 
 ---
 
@@ -238,6 +280,6 @@ MIT License — see [LICENSE](LICENSE) for details.
 
 **Built with ❤️ for Indonesian investors exploring US markets**
 
-*39 modules · Real-time data · AI-powered · ML predictions · Mobile-ready · Beginner-friendly*
+*39 modules · Real-time WebSocket · JWT Auth · CI/CD · AI-powered · ML predictions · Mobile-ready · Production-ready*
 
 </div>
