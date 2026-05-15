@@ -64,9 +64,9 @@ export function AuthGuard({ children }: { children: ReactNode }) {
     <>
       <div className="flex h-screen overflow-hidden">
         <Sidebar />
-        <div className="flex flex-1 flex-col overflow-hidden">
+        <div className="flex flex-1 flex-col">
           <TopBar />
-          <main className="scrollbar-thin relative flex-1 overflow-y-auto pb-16 lg:pb-0">
+          <main className="scrollbar-thin relative flex-1 overflow-y-auto overflow-x-hidden pb-16 lg:pb-0">
             <div className="pointer-events-none absolute inset-0 dot-pattern opacity-30" />
             <div className="relative px-4 py-6 sm:px-6 lg:px-8">
               {children}
