@@ -76,3 +76,27 @@ async def get_current_user_optional(
         return await get_current_user(credentials, db)
     except HTTPException:
         return None
+
+
+async def require_super_admin(
+    current_user: User = Depends(get_current_user),
+) -> User:
+    """Only super_admin can access this endpoint."""
+    if current_user.role != "super_admin":
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Akses ditolak. Hanya Super Admin yang bisa mengakses fitur ini.",
+        )
+    return current_user
+
+
+async def require_admin(
+    current_user: User = Depends(get_current_user),
+) -> User:
+    """Both admin and super_admin can access."""
+    if current_user.role not in ("admin", "super_admin"):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Akses ditolak. Hanya Admin yang bisa mengakses fitur ini.",
+        )
+    return current_user

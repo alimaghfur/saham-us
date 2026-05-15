@@ -1,9 +1,9 @@
-"""Authentication API routes: register, login, refresh, me."""
+"""Authentication API routes: register, login, refresh, me, admin management."""
 from __future__ import annotations
 
 from pydantic import BaseModel, Field
 from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.database import get_db
@@ -15,7 +15,7 @@ from app.core.security import (
     verify_password,
 )
 from app.models.user import User
-from app.api.deps import get_current_user
+from app.api.deps import get_current_user, require_super_admin
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
@@ -49,16 +49,35 @@ class UserResponse(BaseModel):
     email: str
     username: str
     full_name: str | None
+    role: str
     is_active: bool
     is_verified: bool
     created_at: str
+
+
+class UpdateProfileRequest(BaseModel):
+    full_name: str | None = None
+    username: str | None = Field(default=None, min_length=3, max_length=50)
+
+
+class ChangePasswordRequest(BaseModel):
+    current_password: str
+    new_password: str = Field(min_length=8, max_length=100)
+
+
+class UpdateUserRoleRequest(BaseModel):
+    role: str = Field(pattern="^(super_admin|admin)$")
+
+
+class UpdateUserStatusRequest(BaseModel):
+    is_active: bool
 
 
 # --- Routes ---
 
 @router.post("/register", response_model=TokenResponse, status_code=status.HTTP_201_CREATED)
 async def register(body: RegisterRequest, db: AsyncSession = Depends(get_db)):
-    """Register a new user account."""
+    """Register a new user account. First user becomes super_admin."""
     # Check existing email
     result = await db.execute(select(User).where(User.email == body.email))
     if result.scalar_one_or_none():
@@ -69,11 +88,17 @@ async def register(body: RegisterRequest, db: AsyncSession = Depends(get_db)):
     if result.scalar_one_or_none():
         raise HTTPException(status_code=400, detail="Username already taken")
 
+    # First user becomes super_admin
+    count_result = await db.execute(select(func.count()).select_from(User))
+    user_count = count_result.scalar()
+    role = "super_admin" if user_count == 0 else "admin"
+
     user = User(
         email=body.email,
         username=body.username,
         hashed_password=hash_password(body.password),
         full_name=body.full_name,
+        role=role,
     )
     db.add(user)
     await db.flush()
@@ -125,16 +150,6 @@ async def refresh_token(body: RefreshRequest, db: AsyncSession = Depends(get_db)
     )
 
 
-class UpdateProfileRequest(BaseModel):
-    full_name: str | None = None
-    username: str | None = Field(default=None, min_length=3, max_length=50)
-
-
-class ChangePasswordRequest(BaseModel):
-    current_password: str
-    new_password: str = Field(min_length=8, max_length=100)
-
-
 @router.get("/me", response_model=UserResponse)
 async def get_me(current_user: User = Depends(get_current_user)):
     """Get current authenticated user profile."""
@@ -143,6 +158,7 @@ async def get_me(current_user: User = Depends(get_current_user)):
         email=current_user.email,
         username=current_user.username,
         full_name=current_user.full_name,
+        role=current_user.role,
         is_active=current_user.is_active,
         is_verified=current_user.is_verified,
         created_at=current_user.created_at.isoformat(),
@@ -157,7 +173,6 @@ async def update_profile(
 ):
     """Update current user profile (name, username)."""
     if body.username and body.username != current_user.username:
-        # Check if new username is taken
         result = await db.execute(select(User).where(User.username == body.username))
         if result.scalar_one_or_none():
             raise HTTPException(status_code=400, detail="Username already taken")
@@ -174,6 +189,7 @@ async def update_profile(
         email=current_user.email,
         username=current_user.username,
         full_name=current_user.full_name,
+        role=current_user.role,
         is_active=current_user.is_active,
         is_verified=current_user.is_verified,
         created_at=current_user.created_at.isoformat(),
@@ -195,3 +211,92 @@ async def change_password(
     await db.flush()
 
     return {"message": "Password berhasil diubah"}
+
+
+# --- Admin Management (Super Admin Only) ---
+
+@router.get("/users", response_model=list[UserResponse])
+async def list_users(
+    current_user: User = Depends(require_super_admin),
+    db: AsyncSession = Depends(get_db),
+):
+    """List all users (Super Admin only)."""
+    result = await db.execute(select(User).order_by(User.created_at.desc()))
+    users = result.scalars().all()
+    return [
+        UserResponse(
+            id=u.id,
+            email=u.email,
+            username=u.username,
+            full_name=u.full_name,
+            role=u.role,
+            is_active=u.is_active,
+            is_verified=u.is_verified,
+            created_at=u.created_at.isoformat(),
+        )
+        for u in users
+    ]
+
+
+@router.put("/users/{user_id}/role", response_model=UserResponse)
+async def update_user_role(
+    user_id: str,
+    body: UpdateUserRoleRequest,
+    current_user: User = Depends(require_super_admin),
+    db: AsyncSession = Depends(get_db),
+):
+    """Change a user's role (Super Admin only)."""
+    if user_id == current_user.id:
+        raise HTTPException(status_code=400, detail="Tidak bisa mengubah role diri sendiri")
+
+    result = await db.execute(select(User).where(User.id == user_id))
+    target_user = result.scalar_one_or_none()
+    if target_user is None:
+        raise HTTPException(status_code=404, detail="User tidak ditemukan")
+
+    target_user.role = body.role
+    db.add(target_user)
+    await db.flush()
+
+    return UserResponse(
+        id=target_user.id,
+        email=target_user.email,
+        username=target_user.username,
+        full_name=target_user.full_name,
+        role=target_user.role,
+        is_active=target_user.is_active,
+        is_verified=target_user.is_verified,
+        created_at=target_user.created_at.isoformat(),
+    )
+
+
+@router.put("/users/{user_id}/status", response_model=UserResponse)
+async def update_user_status(
+    user_id: str,
+    body: UpdateUserStatusRequest,
+    current_user: User = Depends(require_super_admin),
+    db: AsyncSession = Depends(get_db),
+):
+    """Enable/disable a user account (Super Admin only)."""
+    if user_id == current_user.id:
+        raise HTTPException(status_code=400, detail="Tidak bisa menonaktifkan diri sendiri")
+
+    result = await db.execute(select(User).where(User.id == user_id))
+    target_user = result.scalar_one_or_none()
+    if target_user is None:
+        raise HTTPException(status_code=404, detail="User tidak ditemukan")
+
+    target_user.is_active = body.is_active
+    db.add(target_user)
+    await db.flush()
+
+    return UserResponse(
+        id=target_user.id,
+        email=target_user.email,
+        username=target_user.username,
+        full_name=target_user.full_name,
+        role=target_user.role,
+        is_active=target_user.is_active,
+        is_verified=target_user.is_verified,
+        created_at=target_user.created_at.isoformat(),
+    )

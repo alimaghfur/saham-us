@@ -7,6 +7,7 @@ export interface User {
   email: string;
   username: string;
   full_name: string | null;
+  role: "super_admin" | "admin";
   is_active: boolean;
   is_verified: boolean;
   created_at: string;

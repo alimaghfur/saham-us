@@ -167,6 +167,15 @@ export default function AccountPage() {
                     Belum Terverifikasi
                   </span>
                 )}
+                {user.role === "super_admin" ? (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-violet-500/10 px-2.5 py-0.5 text-xs font-medium text-violet-400">
+                    Super Admin
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-blue-500/10 px-2.5 py-0.5 text-xs font-medium text-blue-400">
+                    Admin
+                  </span>
+                )}
               </div>
             </div>
           </div>

@@ -18,6 +18,7 @@ import {
   PieChart,
   Repeat,
   Settings,
+  Shield,
   ShieldAlert,
   Sparkles,
   Star,
@@ -116,6 +117,7 @@ export const menuSections: MenuSection[] = [
     label: "Settings",
     items: [
       { name: "Akun Saya", href: "/account", icon: UserCircle, description: "Profil & informasi akun" },
+      { name: "Manajemen User", href: "/admin", icon: Shield, badge: "SA", description: "Kelola user (Super Admin)" },
       { name: "Settings", href: "/settings", icon: Settings, description: "Preferensi app" },
     ],
   },

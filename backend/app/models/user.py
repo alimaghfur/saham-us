@@ -22,6 +22,7 @@ class User(Base):
     username: Mapped[str] = mapped_column(String(50), unique=True, nullable=False, index=True)
     hashed_password: Mapped[str] = mapped_column(String(255), nullable=False)
     full_name: Mapped[str] = mapped_column(String(100), nullable=True)
+    role: Mapped[str] = mapped_column(String(20), default="admin", nullable=False)  # super_admin | admin
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     is_verified: Mapped[bool] = mapped_column(Boolean, default=False)
     created_at: Mapped[datetime] = mapped_column(
@@ -32,3 +33,7 @@ class User(Base):
         default=lambda: datetime.now(timezone.utc),
         onupdate=lambda: datetime.now(timezone.utc),
     )
+
+    @property
+    def is_super_admin(self) -> bool:
+        return self.role == "super_admin"

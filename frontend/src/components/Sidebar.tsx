@@ -12,10 +12,12 @@ import {
 
 import { cn } from "@/lib/cn";
 import { menuSections } from "@/lib/menu";
+import { useAuthStore } from "@/lib/auth-store";
 
 export function Sidebar() {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
+  const { user } = useAuthStore();
 
   return (
     <aside
@@ -53,7 +55,13 @@ export function Sidebar() {
             )}
             {collapsed && <div className="mb-2 border-t border-border/30" />}
             <ul className="space-y-0.5">
-              {section.items.map((item) => {
+              {section.items
+                .filter((item) => {
+                  // Hide "Manajemen User" for non-super_admin
+                  if (item.href === "/admin" && user?.role !== "super_admin") return false;
+                  return true;
+                })
+                .map((item) => {
                 const active =
                   item.href === "/"
                     ? pathname === "/"
