@@ -1,33 +1,34 @@
 """Security utilities: password hashing, JWT token creation/verification."""
 from __future__ import annotations
 
-import logging
-import warnings
 from datetime import datetime, timedelta, timezone
 from typing import Optional
 
-# Suppress passlib bcrypt version warning (works fine with bcrypt 4.2+)
-warnings.filterwarnings("ignore", message=".*error reading bcrypt version.*")
-warnings.filterwarnings("ignore", category=DeprecationWarning, module="passlib")
-
+import bcrypt
 from jose import JWTError, jwt
-from passlib.context import CryptContext
 
 from app.core.config import get_settings
 
 settings = get_settings()
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
 
 def hash_password(password: str) -> str:
-    """Hash a plain text password."""
-    return pwd_context.hash(password)
+    """Hash a plain text password using bcrypt directly."""
+    password_bytes = password.encode("utf-8")
+    salt = bcrypt.gensalt(rounds=12)
+    hashed = bcrypt.hashpw(password_bytes, salt)
+    return hashed.decode("utf-8")
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """Verify a plain password against a hash."""
-    return pwd_context.verify(plain_password, hashed_password)
+    """Verify a plain password against a bcrypt hash."""
+    try:
+        return bcrypt.checkpw(
+            plain_password.encode("utf-8"),
+            hashed_password.encode("utf-8"),
+        )
+    except Exception:
+        return False
 
 
 def create_access_token(
