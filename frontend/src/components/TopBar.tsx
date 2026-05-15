@@ -120,7 +120,7 @@ export function TopBar() {
 
           {/* Dropdown Menu */}
           {menuOpen && (
-            <div className="absolute right-0 top-full z-50 mt-2 w-72 animate-fade-in rounded-xl border border-border/50 bg-card/95 p-2 shadow-xl backdrop-blur-xl">
+            <div className="fixed right-4 top-12 z-[9999] mt-2 w-72 animate-fade-in rounded-xl border border-border/50 bg-card p-2 shadow-2xl backdrop-blur-xl">
               {/* User Info */}
               <div className="border-b border-border/30 px-3 py-3">
                 <div className="flex items-center gap-3">
