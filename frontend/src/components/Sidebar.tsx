@@ -46,7 +46,14 @@ export function Sidebar() {
 
       {/* Navigation */}
       <nav className="scrollbar-thin flex-1 overflow-y-auto px-3 py-4">
-        {menuSections.map((section) => (
+        {menuSections.map((section) => {
+          const visibleItems = section.items.filter((item) => {
+            if ((item.href === "/admin" || item.href === "/menu-settings") && user?.role !== "super_admin") return false;
+            if (user?.role === "admin" && allowedMenus.length > 0 && !allowedMenus.includes(item.href)) return false;
+            return true;
+          });
+          if (visibleItems.length === 0) return null;
+          return (
           <div key={section.label} className="mb-5">
             {!collapsed && (
               <div className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-[0.15em] text-muted-foreground/70">
@@ -55,15 +62,7 @@ export function Sidebar() {
             )}
             {collapsed && <div className="mb-2 border-t border-border/30" />}
             <ul className="space-y-0.5">
-              {section.items
-                .filter((item) => {
-                  // Hide Super Admin menus for non-super_admin
-                  if ((item.href === "/admin" || item.href === "/menu-settings") && user?.role !== "super_admin") return false;
-                  // For admin role: only show menus they have access to
-                  if (user?.role === "admin" && allowedMenus.length > 0 && !allowedMenus.includes(item.href)) return false;
-                  return true;
-                })
-                .map((item) => {
+              {visibleItems.map((item) => {
                 const active =
                   item.href === "/"
                     ? pathname === "/"
@@ -129,7 +128,8 @@ export function Sidebar() {
               })}
             </ul>
           </div>
-        ))}
+          );
+        })}
       </nav>
 
       {/* Collapse toggle + footer */}
