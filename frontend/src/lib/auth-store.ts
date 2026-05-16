@@ -17,6 +17,7 @@ interface AuthState {
   accessToken: string | null;
   refreshToken: string | null;
   user: User | null;
+  allowedMenus: string[];
   isAuthenticated: boolean;
   isLoading: boolean;
 
@@ -28,6 +29,7 @@ interface AuthState {
   login: (email: string, password: string) => Promise<void>;
   register: (email: string, username: string, password: string, fullName?: string) => Promise<void>;
   fetchUser: () => Promise<void>;
+  fetchMenuAccess: () => Promise<void>;
 }
 
 const API_BASE = "/api/v1";
@@ -36,6 +38,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   accessToken: null,
   refreshToken: null,
   user: null,
+  allowedMenus: [],
   isAuthenticated: false,
   isLoading: true,
 
@@ -60,6 +63,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       accessToken: null,
       refreshToken: null,
       user: null,
+      allowedMenus: [],
       isAuthenticated: false,
     });
   },
@@ -74,8 +78,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
     if (accessToken && refreshToken) {
       set({ accessToken, refreshToken, isAuthenticated: true, isLoading: false });
-      // Fetch user profile in background
       get().fetchUser();
+      get().fetchMenuAccess();
     } else {
       set({ isLoading: false });
     }
@@ -99,7 +103,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const data = await res.json();
     get().setTokens(data.access_token, data.refresh_token);
     await get().fetchUser();
-    // Redirect to dashboard after successful login
+    await get().fetchMenuAccess();
     if (typeof window !== "undefined") {
       window.location.href = "/";
     }
@@ -109,12 +113,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const res = await fetch(`${API_BASE}/auth/register`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        email,
-        username,
-        password,
-        full_name: fullName || null,
-      }),
+      body: JSON.stringify({ email, username, password, full_name: fullName || null }),
     });
 
     if (!res.ok) {
@@ -128,7 +127,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     const data = await res.json();
     get().setTokens(data.access_token, data.refresh_token);
     await get().fetchUser();
-    // Redirect to dashboard after successful registration
+    await get().fetchMenuAccess();
     if (typeof window !== "undefined") {
       window.location.href = "/";
     }
@@ -147,7 +146,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         const user = await res.json();
         set({ user });
       } else if (res.status === 401) {
-        // Token expired — try refresh
         const { refreshToken } = get();
         if (refreshToken) {
           const refreshRes = await fetch(`${API_BASE}/auth/refresh`, {
@@ -158,7 +156,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           if (refreshRes.ok) {
             const tokens = await refreshRes.json();
             get().setTokens(tokens.access_token, tokens.refresh_token);
-            // Retry fetch user
             const retryRes = await fetch(`${API_BASE}/auth/me`, {
               headers: { Authorization: `Bearer ${tokens.access_token}` },
             });
@@ -176,7 +173,24 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         }
       }
     } catch {
-      // Network error — keep token, user will retry later
+      // Network error
+    }
+  },
+
+  fetchMenuAccess: async () => {
+    const { accessToken } = get();
+    if (!accessToken) return;
+
+    try {
+      const res = await fetch(`${API_BASE}/menu-access/my-menus`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      if (res.ok) {
+        const menus = await res.json();
+        set({ allowedMenus: menus });
+      }
+    } catch {
+      // Network error — keep empty, will show all by default
     }
   },
 }));

@@ -118,6 +118,7 @@ export const menuSections: MenuSection[] = [
     items: [
       { name: "Akun Saya", href: "/account", icon: UserCircle, description: "Profil & informasi akun" },
       { name: "Manajemen User", href: "/admin", icon: Shield, badge: "SA", description: "Kelola user (Super Admin)" },
+      { name: "Akses Menu", href: "/menu-settings", icon: Shield, badge: "SA", description: "Atur akses menu per role" },
       { name: "Settings", href: "/settings", icon: Settings, description: "Preferensi app" },
     ],
   },

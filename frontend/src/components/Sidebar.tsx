@@ -17,7 +17,7 @@ import { useAuthStore } from "@/lib/auth-store";
 export function Sidebar() {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
-  const { user } = useAuthStore();
+  const { user, allowedMenus } = useAuthStore();
 
   return (
     <aside
@@ -57,8 +57,10 @@ export function Sidebar() {
             <ul className="space-y-0.5">
               {section.items
                 .filter((item) => {
-                  // Hide "Manajemen User" for non-super_admin
-                  if (item.href === "/admin" && user?.role !== "super_admin") return false;
+                  // Hide Super Admin menus for non-super_admin
+                  if ((item.href === "/admin" || item.href === "/menu-settings") && user?.role !== "super_admin") return false;
+                  // For admin role: only show menus they have access to
+                  if (user?.role === "admin" && allowedMenus.length > 0 && !allowedMenus.includes(item.href)) return false;
                   return true;
                 })
                 .map((item) => {

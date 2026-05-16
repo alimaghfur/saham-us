@@ -69,6 +69,10 @@ API_V1 = "/api/v1"
 from app.api import auth
 app.include_router(auth.router, prefix=API_V1)
 
+# Menu access router
+from app.api import menu_access
+app.include_router(menu_access.router, prefix=API_V1)
+
 app.include_router(stocks.router, prefix=API_V1)
 app.include_router(market.router, prefix=API_V1)
 app.include_router(technicals.router, prefix=API_V1)
