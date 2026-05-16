@@ -300,3 +300,137 @@ async def update_user_status(
         is_verified=target_user.is_verified,
         created_at=target_user.created_at.isoformat(),
     )
+
+
+
+class CreateUserRequest(BaseModel):
+    email: str = Field(min_length=5, max_length=255)
+    username: str = Field(min_length=3, max_length=50)
+    password: str = Field(min_length=8, max_length=100)
+    full_name: str | None = None
+    role: str = Field(default="admin", pattern="^(super_admin|admin)$")
+
+
+class EditUserRequest(BaseModel):
+    email: str | None = Field(default=None, min_length=5, max_length=255)
+    username: str | None = Field(default=None, min_length=3, max_length=50)
+    full_name: str | None = None
+    role: str | None = Field(default=None, pattern="^(super_admin|admin)$")
+    is_active: bool | None = None
+    password: str | None = Field(default=None, min_length=8, max_length=100)
+
+
+@router.post("/users", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+async def create_user(
+    body: CreateUserRequest,
+    current_user: User = Depends(require_super_admin),
+    db: AsyncSession = Depends(get_db),
+):
+    """Create a new user (Super Admin only)."""
+    # Check existing email
+    result = await db.execute(select(User).where(User.email == body.email))
+    if result.scalar_one_or_none():
+        raise HTTPException(status_code=400, detail="Email sudah terdaftar")
+
+    # Check existing username
+    result = await db.execute(select(User).where(User.username == body.username))
+    if result.scalar_one_or_none():
+        raise HTTPException(status_code=400, detail="Username sudah dipakai")
+
+    new_user = User(
+        email=body.email,
+        username=body.username,
+        hashed_password=hash_password(body.password),
+        full_name=body.full_name,
+        role=body.role,
+    )
+    db.add(new_user)
+    await db.flush()
+
+    return UserResponse(
+        id=new_user.id,
+        email=new_user.email,
+        username=new_user.username,
+        full_name=new_user.full_name,
+        role=new_user.role,
+        is_active=new_user.is_active,
+        is_verified=new_user.is_verified,
+        created_at=new_user.created_at.isoformat(),
+    )
+
+
+@router.put("/users/{user_id}", response_model=UserResponse)
+async def edit_user(
+    user_id: str,
+    body: EditUserRequest,
+    current_user: User = Depends(require_super_admin),
+    db: AsyncSession = Depends(get_db),
+):
+    """Edit a user's details (Super Admin only)."""
+    result = await db.execute(select(User).where(User.id == user_id))
+    target_user = result.scalar_one_or_none()
+    if target_user is None:
+        raise HTTPException(status_code=404, detail="User tidak ditemukan")
+
+    if body.email and body.email != target_user.email:
+        existing = await db.execute(select(User).where(User.email == body.email))
+        if existing.scalar_one_or_none():
+            raise HTTPException(status_code=400, detail="Email sudah terdaftar")
+        target_user.email = body.email
+
+    if body.username and body.username != target_user.username:
+        existing = await db.execute(select(User).where(User.username == body.username))
+        if existing.scalar_one_or_none():
+            raise HTTPException(status_code=400, detail="Username sudah dipakai")
+        target_user.username = body.username
+
+    if body.full_name is not None:
+        target_user.full_name = body.full_name
+
+    if body.role is not None:
+        if user_id == current_user.id:
+            raise HTTPException(status_code=400, detail="Tidak bisa mengubah role diri sendiri")
+        target_user.role = body.role
+
+    if body.is_active is not None:
+        if user_id == current_user.id:
+            raise HTTPException(status_code=400, detail="Tidak bisa menonaktifkan diri sendiri")
+        target_user.is_active = body.is_active
+
+    if body.password:
+        target_user.hashed_password = hash_password(body.password)
+
+    db.add(target_user)
+    await db.flush()
+
+    return UserResponse(
+        id=target_user.id,
+        email=target_user.email,
+        username=target_user.username,
+        full_name=target_user.full_name,
+        role=target_user.role,
+        is_active=target_user.is_active,
+        is_verified=target_user.is_verified,
+        created_at=target_user.created_at.isoformat(),
+    )
+
+
+@router.delete("/users/{user_id}")
+async def delete_user(
+    user_id: str,
+    current_user: User = Depends(require_super_admin),
+    db: AsyncSession = Depends(get_db),
+):
+    """Delete a user (Super Admin only)."""
+    if user_id == current_user.id:
+        raise HTTPException(status_code=400, detail="Tidak bisa menghapus diri sendiri")
+
+    result = await db.execute(select(User).where(User.id == user_id))
+    target_user = result.scalar_one_or_none()
+    if target_user is None:
+        raise HTTPException(status_code=404, detail="User tidak ditemukan")
+
+    await db.delete(target_user)
+    await db.flush()
+
+    return {"message": f"User {target_user.username} berhasil dihapus"}
