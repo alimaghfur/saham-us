@@ -40,7 +40,44 @@ async def search_stocks(
 
 @router.get("/{symbol}/quote", response_model=Quote)
 async def get_quote(symbol: str):
-    """Return the current quote for a single symbol."""
+    """Return the current quote for a single symbol.
+    
+    Uses Finnhub (real-time, no delay) if API key is configured,
+    falls back to yfinance (15-min delay) otherwise.
+    """
+    from app.adapters.finnhub_adapter import get_realtime_quote
+    from app.core.config import get_settings
+
+    settings = get_settings()
+
+    # Try Finnhub first (real-time)
+    if settings.finnhub_api_key:
+        fh_quote = await get_realtime_quote(symbol)
+        if fh_quote:
+            return Quote(
+                symbol=symbol.upper(),
+                name=None,  # Will be filled by profile call if needed
+                price=fh_quote["price"],
+                change=fh_quote["change"],
+                change_percent=fh_quote["change_percent"],
+                previous_close=fh_quote["previous_close"],
+                open=fh_quote["open"],
+                day_high=fh_quote["high"],
+                day_low=fh_quote["low"],
+                volume=None,
+                avg_volume=None,
+                market_cap=None,
+                pe_ratio=None,
+                eps=None,
+                dividend_yield=None,
+                beta=None,
+                week52_high=None,
+                week52_low=None,
+                currency="USD",
+                exchange=None,
+            )
+
+    # Fallback to yfinance (15-min delay)
     return await get_market_data_service().quote(symbol)
 
 
