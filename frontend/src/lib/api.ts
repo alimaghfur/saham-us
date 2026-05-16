@@ -155,6 +155,8 @@ export const api = {
   // --- prediction ---
   prediction: (symbol: string, range = "1y") =>
     fetchJson<any>(`${BASE}/prediction/${symbol}?range=${range}`),
+  topPredictions: (limit = 10) =>
+    fetchJson<any[]>(`${BASE}/prediction/top?limit=${limit}`),
 
   // --- sentiment ---
   sentiment: (symbol: string, limit = 20) =>
