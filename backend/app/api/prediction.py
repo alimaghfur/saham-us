@@ -59,9 +59,14 @@ class TopPredictionItem(BaseModel):
     current_price: float
     overall_bias: str
     overall_score: float
+    confidence: float = 0
+    signal_agreement: int = 0
+    agreement_label: str = "mixed"
+    model_breakdown: dict | None = None
     prediction_1d: PredictionTimeframe | None = None
     prediction_1w: PredictionTimeframe | None = None
     entry_point: EntryPointResponse | None = None
+    disclaimer: str = ""
 
 
 @router.get("/top", response_model=List[TopPredictionItem])
@@ -69,9 +74,9 @@ async def get_top_predictions(
     limit: int = Query(10, ge=1, le=20, description="Number of predictions to return"),
 ):
     """
-    Auto-generate predictions for top US stocks.
-    Returns pre-analyzed predictions without needing user input.
-    Sorted by strongest signal (highest absolute score).
+    Auto-generate ENHANCED predictions for top US stocks.
+    Combines: Technical Analysis (35%) + ML Ensemble (30%) + Sentiment (20%) + Volume Profile (15%).
+    Sorted by strongest signal (highest absolute combined score).
     """
     import asyncio
     import logging
@@ -85,11 +90,29 @@ async def get_top_predictions(
             history = await service.history(sym, range_="1y", interval="1d")
             if not history.candles or len(history.candles) < 50:
                 return None
-            report = generate_prediction(history.candles, sym)
+
+            # Fetch news headlines for sentiment (via Finnhub if available)
+            news_headlines = []
+            try:
+                from app.adapters.finnhub_adapter import get_company_news
+                news_items = await get_company_news(sym, limit=10)
+                news_headlines = [n.get("headline", "") for n in news_items if n.get("headline")]
+            except Exception:
+                pass
+
+            # Use enhanced multi-model prediction
+            from app.services.enhanced_prediction import generate_enhanced_prediction
+            report = generate_enhanced_prediction(
+                history.candles, sym, news_headlines=news_headlines or None
+            )
+
+            # Extract 1d and 1w predictions from TA
+            from app.services.prediction import generate_prediction as gen_ta
+            ta_report = gen_ta(history.candles, sym)
 
             pred_1d = None
             pred_1w = None
-            for p in report.predictions:
+            for p in ta_report.predictions:
                 if p.timeframe == "1d":
                     pred_1d = PredictionTimeframe(
                         timeframe=p.timeframe, direction=p.direction,
@@ -97,7 +120,7 @@ async def get_top_predictions(
                         predicted_high=p.predicted_high,
                         predicted_change_pct_low=p.predicted_change_pct_low,
                         predicted_change_pct_high=p.predicted_change_pct_high,
-                        signals=p.signals,
+                        signals=p.signals[:5],
                     )
                 elif p.timeframe == "1w":
                     pred_1w = PredictionTimeframe(
@@ -106,14 +129,23 @@ async def get_top_predictions(
                         predicted_high=p.predicted_high,
                         predicted_change_pct_low=p.predicted_change_pct_low,
                         predicted_change_pct_high=p.predicted_change_pct_high,
-                        signals=p.signals,
+                        signals=p.signals[:5],
                     )
 
             return TopPredictionItem(
                 symbol=report.symbol,
                 current_price=report.current_price,
-                overall_bias=report.overall_bias,
-                overall_score=report.overall_score,
+                overall_bias=report.direction,
+                overall_score=report.combined_score,
+                confidence=report.confidence,
+                signal_agreement=report.signal_agreement,
+                agreement_label=report.agreement_label,
+                model_breakdown={
+                    "ta_score": report.model_breakdown.ta_score,
+                    "ml_score": report.model_breakdown.ml_score,
+                    "sentiment_score": report.model_breakdown.sentiment_score,
+                    "volume_score": report.model_breakdown.volume_score,
+                },
                 prediction_1d=pred_1d,
                 prediction_1w=pred_1w,
                 entry_point=EntryPointResponse(
@@ -125,9 +157,10 @@ async def get_top_predictions(
                     entry_type=report.entry_point.entry_type,
                     reasoning=report.entry_point.reasoning,
                 ),
+                disclaimer=report.disclaimer,
             )
         except Exception as e:
-            log.debug("Prediction failed for %s: %s", sym, e)
+            log.debug("Enhanced prediction failed for %s: %s", sym, e)
             return None
 
     # Analyze symbols concurrently (batch of 5 at a time to avoid rate limits)
